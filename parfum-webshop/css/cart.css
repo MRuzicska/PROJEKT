@@ -1,0 +1,181 @@
+body{
+  background: #f4f6f9;
+  color: #1f2937;
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 24px;
+}
+
+/* Title */
+h1{
+  margin: 0 0 12px 0;
+  font-size: 30px;
+  font-weight: 900;
+  color: #1f6feb;
+}
+
+/* Back link block */
+body > p:first-of-type{
+  margin: 0 0 16px 0;
+}
+body > p:first-of-type a{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  text-decoration: none;
+  font-weight: 800;
+  color: #1f3b8a;
+}
+body > p:first-of-type a:hover{
+  background: #eef2ff;
+}
+
+/* Empty cart message */
+body > p:nth-of-type(2){
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  width: min(1100px, 96vw);
+}
+
+/* Table wrapper feel */
+table{
+  width: min(1100px, 96vw);
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
+}
+
+/* Remove old HTML border look */
+table[border="1"]{
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Header row */
+th{
+  background: #f9fafb;
+  font-size: 12px;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+  color: #6b7280;
+  font-weight: 900;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Cells */
+td{
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef2f7;
+  vertical-align: middle;
+  font-size: 14px;
+}
+
+/* Last row border */
+tr:last-child td{
+  border-bottom: none;
+}
+
+/* Product cell emphasis */
+td:first-child{
+  font-weight: 800;
+  color: #111827;
+}
+
+/* Price + subtotal columns align a bit nicer */
+td:nth-child(2),
+td:nth-child(4){
+  white-space: nowrap;
+  font-weight: 800;
+}
+
+/* Quantity input */
+input[type="number"]{
+  padding: 9px 10px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  outline: none;
+  text-align: center;
+}
+input[type="number"]:focus{
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.12);
+}
+
+/* Buttons default */
+button{
+  padding: 9px 12px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* "Mentés" (update) button: blue */
+form input[name="action"][value="update"] + input + button{
+  background: #1f6feb;
+  color: #fff;
+}
+form input[name="action"][value="update"] + input + button:hover{
+  background: #1857b8;
+}
+
+/* "Törlés" (delete) button: red */
+form input[name="action"][value="delete"] + input + button{
+  background: #ef4444;
+  color: #fff;
+}
+form input[name="action"][value="delete"] + input + button:hover{
+  background: #dc2626;
+}
+
+/* Total line */
+p strong{
+  display: inline-block;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 24px rgba(16, 24, 40, 0.06);
+  font-size: 16px;
+}
+
+/* Checkout link (last link) */
+body > p:last-of-type a{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: #10b981;
+  color: #ffffff;
+  font-weight: 950;
+  text-decoration: none;
+  border: 1px solid #10b981;
+}
+body > p:last-of-type a:hover{
+  background: #059669;
+}
+
+/* Mobile: make table scrollable */
+@media (max-width: 820px){
+  body{
+    padding: 16px;
+  }
+  table{
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

@@ -1,0 +1,114 @@
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  background: #f4f6f9;
+}
+
+/* Title */
+h1 {
+  font-size: 30px;
+  font-weight: 900;
+  letter-spacing: 0.2px;
+  margin: 0 0 6px 0;
+  color: #1f6feb;
+}
+
+/* Error message */
+body > p[style*="color:red"] {
+  width: min(420px, 92vw);
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  color: #b91c1c !important;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin: 0;
+}
+
+/* Form card */
+form[method="post"] {
+  width: min(420px, 92vw);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
+}
+
+/* Labels */
+form[method="post"] label {
+  display: block;
+  font-size: 13px;
+  font-weight: 800;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+/* Inputs */
+form[method="post"] input {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+}
+
+form[method="post"] input:focus {
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.12);
+}
+
+/* Submit button */
+form[method="post"] button[type="submit"] {
+  width: 100%;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  background: #1f6feb;
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+form[method="post"] button[type="submit"]:hover {
+  background: #1857b8;
+}
+
+/* Bottom link */
+body > p:last-of-type {
+  width: min(420px, 92vw);
+  text-align: center;
+  margin: 0;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+body > p:last-of-type a {
+  color: #1f6feb;
+  font-weight: 800;
+  text-decoration: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+}
+
+body > p:last-of-type a:hover {
+  background: #eef2ff;
+  text-decoration: none;
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px) {
+  h1 { font-size: 26px; }
+  form[method="post"] { padding: 16px; }
+}

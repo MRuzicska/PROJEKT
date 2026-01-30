@@ -1,0 +1,125 @@
+body{
+  background: #f4f6f9;
+  color: #1f2937;
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 24px;
+  min-height: 100vh;
+
+  /* center the form nicely */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Title */
+h1{
+  margin: 0 0 6px 0;
+  font-size: 30px;
+  font-weight: 900;
+  color: #1f6feb;
+  letter-spacing: .2px;
+}
+
+/* Back link */
+body > p:first-of-type{
+  margin: 0;
+  width: min(480px, 92vw);
+}
+body > p:first-of-type a{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  font-weight: 900;
+  color: #1f3b8a;
+  text-decoration: none;
+}
+body > p:first-of-type a:hover{
+  background: #eef2ff;
+}
+
+/* Error message (your inline red stays, this improves layout) */
+body > p[style*="color:red"]{
+  width: min(480px, 92vw);
+  margin: 0;
+  background: #fff5f5;
+  border: 1px solid #fecaca;
+  color: #b91c1c !important;
+  padding: 10px 12px;
+  border-radius: 12px;
+  font-weight: 800;
+}
+
+/* Form card */
+form[method="post"]{
+  width: min(480px, 92vw);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
+}
+
+/* Labels */
+form[method="post"] label{
+  display: block;
+  font-size: 13px;
+  font-weight: 900;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+/* Inputs */
+form[method="post"] input{
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 14px;
+  color: #111827;
+  outline: none;
+}
+
+form[method="post"] input:focus{
+  border-color: #1f6feb;
+  box-shadow: 0 0 0 4px rgba(31, 111, 235, 0.12);
+}
+
+/* Hide the visual effect of <br> spacing (keep, but looks fine) */
+form[method="post"] br{
+  display: none;
+}
+
+/* Submit button */
+form[method="post"] button[type="submit"]{
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: none;
+  background: #10b981;
+  color: #ffffff;
+  font-weight: 950;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+form[method="post"] button[type="submit"]:hover{
+  background: #059669;
+}
+
+/* Mobile tweaks */
+@media (max-width: 480px){
+  body{ padding: 16px; }
+  h1{ font-size: 26px; }
+  form[method="post"]{ padding: 16px; border-radius: 14px; }
+}

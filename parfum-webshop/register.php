@@ -33,7 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Regisztráció</title></head>
+<head><meta charset="utf-8"><title>Regisztráció</title>
+<link rel="stylesheet" href="css/register.css"></head>
 <body>
 <h1>Regisztráció</h1>
 <?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>

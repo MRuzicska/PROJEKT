@@ -1,0 +1,131 @@
+body{
+  background: #f4f6f9;
+  color: #1f2937;
+  font-family: "Segoe UI", Arial, sans-serif;
+  margin: 0;
+  padding: 24px;
+}
+
+/* Title */
+h1{
+  margin: 0 0 12px 0;
+  font-size: 30px;
+  font-weight: 900;
+  color: #1f6feb;
+}
+
+/* Back link */
+body > p:first-of-type{
+  margin: 0 0 16px 0;
+}
+body > p:first-of-type a{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  font-weight: 900;
+  color: #1f3b8a;
+  text-decoration: none;
+}
+body > p:first-of-type a:hover{
+  background: #eef2ff;
+}
+
+/* Empty state */
+body > p:nth-of-type(2){
+  width: min(1000px, 96vw);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 18px;
+  font-weight: 700;
+  color: #6b7280;
+}
+
+/* Orders table */
+table{
+  width: min(1000px, 96vw);
+  border-collapse: separate !important;
+  border-spacing: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
+}
+
+/* Remove default HTML border look */
+table[border="1"]{
+  border: 1px solid #e5e7eb !important;
+}
+
+/* Header */
+th{
+  background: #f9fafb;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: .2px;
+  color: #6b7280;
+  font-weight: 900;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Cells */
+td{
+  padding: 12px 14px;
+  border-bottom: 1px solid #eef2f7;
+  font-size: 14px;
+}
+
+/* Last row */
+tr:last-child td{
+  border-bottom: none;
+}
+
+/* ID column */
+td:first-child{
+  font-weight: 900;
+}
+
+/* Amount column */
+td:nth-child(2){
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+/* Status column – simple color hints */
+td:nth-child(3){
+  font-weight: 800;
+}
+td:nth-child(3):contains("NEW"){
+  color: #2563eb;
+}
+td:nth-child(3):contains("DONE"){
+  color: #16a34a;
+}
+td:nth-child(3):contains("CANCEL"){
+  color: #dc2626;
+}
+
+/* Date column */
+td:nth-child(4){
+  color: #6b7280;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Mobile: horizontal scroll */
+@media (max-width: 820px){
+  body{
+    padding: 16px;
+  }
+  table{
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
