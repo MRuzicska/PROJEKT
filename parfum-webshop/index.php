@@ -66,7 +66,7 @@ $cats = $pdo->query("SELECT id, name FROM categories ORDER BY name")->fetchAll()
     <strong><?=h($p['brand'])?> – <?=h($p['name'])?></strong>
     (<?=h($p['category_name'])?>) <br>
     Ár: <?= (int)$p['price'] ?> Ft | Készlet: <?= (int)$p['stock'] ?><br>
-    <a href="product.php?id=<?=$p['id']?>">Részletek</a>
+    <a href="product.php?id=<?= (int)$p['id'] ?>">Részletek</a>
     <?php if (is_logged_in()): ?>
       <?php if ((int)$p['stock'] > 0): ?>
         <form method="post" action="cart.php" style="display:inline;">

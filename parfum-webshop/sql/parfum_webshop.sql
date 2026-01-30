@@ -35,6 +35,11 @@ CREATE TABLE `cart_items` (
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_hungarian_ci;
 
+
+ALTER TABLE cart_items ADD COLUMN variant_id INT NULL;
+ALTER TABLE cart_items ADD CONSTRAINT fk_cart_variant
+  FOREIGN KEY (variant_id) REFERENCES product_variants(id);
+
 --
 -- A tábla adatainak kiíratása `cart_items`
 --
@@ -285,3 +290,26 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+-- Tábla szerkezet ehhez a táblához `product_variants`
+--
+
+CREATE TABLE IF NOT EXISTS product_variants (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  product_id INT NOT NULL,
+  size_ml INT NOT NULL,
+  price INT NOT NULL,
+  stock INT NOT NULL DEFAULT 0,
+  UNIQUE KEY uq_product_size (product_id, size_ml),
+  CONSTRAINT fk_variant_product
+    FOREIGN KEY (product_id) REFERENCES products(id)
+    ON DELETE CASCADE
+);
+--------------------------------------------------------
+
+INSERT INTO product_variants (product_id, size_ml, price, stock)
+VALUES
+(1, 50, 19990, 10),
+(1, 100, 29990, 7);
+
