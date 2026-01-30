@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+__MACOSX/
+
+# local config
+config.php
+
+# logs
+*.log
+
+# temp
+/tmp/
