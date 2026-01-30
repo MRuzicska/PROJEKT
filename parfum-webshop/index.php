@@ -31,7 +31,8 @@ $cats = $pdo->query("SELECT id, name FROM categories ORDER BY name")->fetchAll()
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Parfüm webshop</title></head>
+<head><meta charset="utf-8"><title>Parfüm webshop</title>
+<link rel="stylesheet" href="css/style.css"></head>
 <body>
 <h1>Parfüm webshop</h1>
 

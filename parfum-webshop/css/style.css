@@ -1,0 +1,184 @@
+ *{
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #f4f6f9;
+  color: #1f2937;
+}
+
+/* ===== PAGE TITLE ===== */
+h1 {
+  margin-bottom: 10px;
+  font-size: 32px;
+  font-weight: 800;
+  color: #1f6feb;
+}
+
+/* ===== TOP NAV TEXT ===== */
+body > p {
+  background: #ffffff;
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+body > p a {
+  margin-right: 10px;
+  font-weight: 600;
+  color: #1f6feb;
+  text-decoration: none;
+}
+
+body > p a:hover {
+  text-decoration: underline;
+}
+
+/* ===== FILTER FORM ===== */
+form[method="get"] {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+
+form[method="get"] input,
+form[method="get"] select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+form[method="get"] button {
+  padding: 10px 16px;
+  border-radius: 10px;
+  border: none;
+  background: #1f6feb;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+form[method="get"] button:hover {
+  background: #1857b8;
+}
+
+/* ===== PRODUCT LIST ===== */
+hr {
+  display: none;
+}
+
+/* each product block */
+body > div {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 14px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.05);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+body > div:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+}
+
+/* product name */
+body > div strong {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+/* category */
+body > div strong + text {
+  color: #6b7280;
+}
+
+/* price / stock */
+body > div br + text {
+  font-size: 14px;
+}
+
+/* ===== LINKS ===== */
+body > div a {
+  display: inline-block;
+  margin-top: 6px;
+  margin-right: 10px;
+  font-weight: 600;
+  color: #1f6feb;
+  text-decoration: none;
+}
+
+body > div a:hover {
+  text-decoration: underline;
+}
+
+/* ===== ADD TO CART FORM ===== */
+body > div form {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+body > div input[type="number"] {
+  padding: 6px;
+  width: 60px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+body > div button {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: none;
+  background: #10b981;
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+body > div button:hover {
+  background: #059669;
+}
+
+/* ===== SOLD OUT / INFO ===== */
+em {
+  color: #9ca3af;
+  font-style: italic;
+  margin-left: 6px;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 600px) {
+  body {
+    padding: 14px;
+  }
+
+  form[method="get"] {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body > div form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  body > div input[type="number"],
+  body > div button {
+    width: 100%;
+  }
+}
