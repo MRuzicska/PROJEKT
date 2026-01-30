@@ -25,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Bejelentkezés</title></head>
+<head><meta charset="utf-8"><title>Bejelentkezés</title>
+<link rel="stylesheet" href="css/login.css"></head>
 <body>
 <h1>Bejelentkezés</h1>
 <?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>
