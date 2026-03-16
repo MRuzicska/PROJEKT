@@ -218,6 +218,41 @@ INSERT INTO `products` (`id`, `name`, `brand`, `description`, `price`, `stock`, 
 (73, 'Thank U Next EDP 50ml', 'Ariana Grande', 'Édes kókuszos illat.', 24990, 19, 1, NULL, NOW());
 
 
+UPDATE products 
+SET image_url = 'images/5.jpg' 
+WHERE id = 5;
+
+UPDATE products 
+SET image_url = 'images/6.jpg' 
+WHERE id = 6;
+
+UPDATE products 
+SET image_url = 'images/7.jpg' 
+WHERE id = 7;
+
+UPDATE products 
+SET image_url = 'images/8.avif' 
+WHERE id = 8;
+
+UPDATE products 
+SET image_url = 'images/9.jpg' 
+WHERE id = 9;
+
+UPDATE products 
+SET image_url = 'images/10.webp' 
+WHERE id = 10;
+
+
+UPDATE products 
+SET image_url = 'images/11.jpeg' 
+WHERE id = 11;
+
+UPDATE products 
+SET image_url = 'images/12.jpeg' 
+WHERE id = 12;
+
+
+
 
 -- INSERT INTO `categories` (`id`, `name`) VALUES
 --(2, 'Férfi'),
