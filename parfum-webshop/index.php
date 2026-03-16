@@ -5,6 +5,8 @@ require __DIR__ . '/includes/functions.php';
 
 $search = isset($_GET['search']) ? trim((string)$_GET['search']) : '';
 $cat = get_int('category_id', 0);
+$brand = isset($_GET['brand']) ? trim((string)$_GET['brand']) : '';
+$price_range = isset($_GET['price_range']) ? trim((string)$_GET['price_range']) : '';
 
 $sql = "SELECT p.*, c.name AS category_name
         FROM products p
@@ -21,6 +23,21 @@ if ($cat > 0) {
   $sql .= " AND p.category_id = ?";
   $params[] = $cat;
 }
+if ($brand !== '') {
+  $sql .= " AND p.brand = ?";
+  $params[] = $brand;
+}
+if ($price_range !== '') {
+  if ($price_range === '0-10000') {
+    $sql .= " AND p.price BETWEEN 0 AND 10000";
+  } elseif ($price_range === '10000-20000') {
+    $sql .= " AND p.price BETWEEN 10000 AND 20000";
+  } elseif ($price_range === '20000-30000') {
+    $sql .= " AND p.price BETWEEN 20000 AND 30000";
+  } elseif ($price_range === '30000+') {
+    $sql .= " AND p.price >= 30000";
+  }
+}
 $sql .= " ORDER BY p.id DESC";
 
 $stmt = $pdo->prepare($sql);
@@ -28,6 +45,7 @@ $stmt->execute($params);
 $products = $stmt->fetchAll();
 
 $cats = $pdo->query("SELECT id, name FROM categories ORDER BY name")->fetchAll();
+$brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fetchAll();
 ?>
 <!doctype html>
 <html lang="hu">
@@ -49,12 +67,25 @@ $cats = $pdo->query("SELECT id, name FROM categories ORDER BY name")->fetchAll()
 </p>
 
 <form method="get">
-  <input name="search" placeholder="Keresés..." value="<?=h($search)?>">
+  <input name="search" placeholder="Keresés név vagy márka szerint..." value="<?=h($search)?>">
   <select name="category_id">
     <option value="0">Összes kategória</option>
     <?php foreach ($cats as $c): ?>
       <option value="<?=$c['id']?>" <?=$cat===(int)$c['id']?'selected':''?>><?=h($c['name'])?></option>
     <?php endforeach; ?>
+  </select>
+  <select name="brand">
+    <option value="">Összes márka</option>
+    <?php foreach ($brands as $b): ?>
+      <option value="<?=h($b['brand'])?>" <?=$brand===$b['brand']?'selected':''?>><?=h($b['brand'])?></option>
+    <?php endforeach; ?>
+  </select>
+  <select name="price_range">
+    <option value="">Összes ár</option>
+    <option value="0-10000" <?=$price_range==='0-10000'?'selected':''?>>0 - 10 000 Ft</option>
+    <option value="10000-20000" <?=$price_range==='10000-20000'?'selected':''?>>10 000 - 20 000 Ft</option>
+    <option value="20000-30000" <?=$price_range==='20000-30000'?'selected':''?>>20 000 - 30 000 Ft</option>
+    <option value="30000+" <?=$price_range==='30000+'?'selected':''?>>30 000 Ft felett</option>
   </select>
   <button type="submit">Szűrés</button>
 </form>
