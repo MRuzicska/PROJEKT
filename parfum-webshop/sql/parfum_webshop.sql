@@ -141,9 +141,6 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `brand`, `description`, `price`, `stock`, `category_id`, `image_url`, `created_at`) VALUES
-(1, 'Rose Bloom EDP 50ml', 'Flora', 'Virágos-gyümölcsös, mindennapokra.', 12990, 20, 1, NULL, '2026-01-29 15:05:14'),
-(2, 'Night Cedar EDT 100ml', 'Nord', 'Fás, friss, elegáns.', 15990, 7, 2, NULL, '2026-01-29 15:05:14'),
-(3, 'Citrus Mist EDC 75ml', 'Aqua', 'Citrusos, könnyed.', 9990, 18, 3, NULL, '2026-01-29 15:05:14');
 (1, 'Rose Bloom EDP 50ml', 'Flora', 'Virágos-gyümölcsös, mindennapokra.', 12990, 20, 1, NULL, NOW()),
 (2, 'Night Cedar EDT 100ml', 'Nord', 'Fás, friss, elegáns.', 15990, 20, 2, NULL, NOW()),
 (3, 'Citrus Mist EDC 75ml', 'Aqua', 'Citrusos, könnyed.', 9990, 20, 3, NULL, NOW()),
@@ -251,7 +248,249 @@ UPDATE products
 SET image_url = 'images/12.jpeg' 
 WHERE id = 12;
 
+UPDATE products 
+SET image_url = 'images/13.webp' 
+WHERE id = 13;
 
+UPDATE products 
+SET image_url = 'images/14.jpg' 
+WHERE id = 14;
+
+UPDATE products 
+SET image_url = 'images/15.jpg' 
+WHERE id = 15;
+
+UPDATE products 
+SET image_url = 'images/16.jpg' 
+WHERE id = 16;
+
+UPDATE products 
+SET image_url = 'images/17.jpg' 
+WHERE id = 17;
+
+UPDATE products
+SET image_url = 'images/18.webp' 
+WHERE id = 18;
+
+UPDATE products
+SET image_url = 'images/19.jpeg'
+WHERE id = 19;
+
+UPDATE products
+SET image_url = 'images/20.jpg'
+WHERE id = 20;
+
+UPDATE products
+SET image_url = 'images/21.jpg'
+WHERE id = 21;
+
+UPDATE products
+SET image_url = 'images/22.jpg'
+WHERE id = 22;
+
+UPDATE products
+SET image_url = 'images/23.webp'
+WHERE id = 23;
+
+UPDATE products
+SET image_url = 'images/24.webp'
+WHERE id = 24;
+
+UPDATE products
+SET image_url = 'images/25.jpg'
+WHERE id = 25;
+
+UPDATE products
+SET image_url = 'images/26.avif'
+WHERE id = 26;
+
+UPDATE products
+SET image_url = 'images/27.jpg'
+WHERE id = 27;
+
+UPDATE products
+SET image_url = 'images/28.jpg'
+WHERE id = 28;
+
+UPDATE products
+SET image_url = 'images/29.jpg'
+WHERE id = 29;
+
+UPDATE products
+SET image_url = 'images/30.avif'
+WHERE id = 30;
+
+UPDATE products
+SET image_url = 'images/31.jpg'
+WHERE id = 31;
+
+UPDATE products
+SET image_url = 'images/32.jpeg'
+WHERE id = 32;
+
+UPDATE products
+SET image_url = 'images/33.jpg'
+WHERE id = 33;
+
+UPDATE products
+SET image_url = 'images/34.jpg'
+WHERE id = 34;
+
+UPDATE products
+SET image_url = 'images/35.jpg'
+WHERE id = 35;
+
+UPDATE products
+SET image_url = 'images/36.webp'
+WHERE id = 36;
+
+UPDATE products
+SET image_url = 'images/37.jpg'
+WHERE id = 37;
+
+UPDATE products
+SET image_url = 'images/38.jpg'
+WHERE id = 38;
+
+UPDATE products
+SET image_url = 'images/39.avif'
+WHERE id = 39;
+
+UPDATE products
+SET image_url = 'images/40.jpg'
+WHERE id = 40;
+
+UPDATE products
+SET image_url = 'images/41.webp'
+WHERE id = 41;
+
+UPDATE products
+SET image_url = 'images/42.jpg'
+WHERE id = 42;
+
+UPDATE products
+SET image_url = 'images/43.jpeg'
+WHERE id = 43;
+
+UPDATE products
+SET image_url = 'images/44.jpg'
+WHERE id = 44;
+
+UPDATE products
+SET image_url = 'images/45.png'
+WHERE id = 45;
+
+UPDATE products
+SET image_url = 'images/46.jpg'
+WHERE id = 46;
+
+UPDATE products
+SET image_url = 'images/47.jpg'
+WHERE id = 47;
+
+UPDATE products
+SET image_url = 'images/48.jpg'
+WHERE id = 48;
+
+UPDATE products
+SET image_url = 'images/49.jpg'
+WHERE id = 49;
+
+UPDATE products
+SET image_url = 'images/50.webp'
+WHERE id = 50;
+
+UPDATE products
+SET image_url = 'images/51.jpeg'
+WHERE id = 51;
+
+UPDATE products
+SET image_url = 'images/52.jpg'
+WHERE id = 52;
+
+UPDATE products
+SET image_url = 'images/53.jpg'
+WHERE id = 53;
+
+UPDATE products
+SET image_url = 'images/54.jpg'
+WHERE id = 54;
+
+UPDATE products
+SET image_url = 'images/55.jpg' 
+WHERE id = 55;
+
+UPDATE products
+SET image_url = 'images/56.webp'
+WHERE id = 56;
+
+UPDATE products
+SET image_url = 'images/57.jpg'
+WHERE id = 57;
+
+UPDATE products
+SET image_url = 'images/58.jpg'
+WHERE id = 58;
+
+UPDATE products
+SET image_url = 'images/59.jpg'
+WHERE id = 59;
+
+UPDATE products
+SET image_url = 'images/60.jpg'
+WHERE id = 60;
+
+UPDATE products
+SET image_url = 'images/61.jpg'
+WHERE id = 61;
+
+UPDATE products
+SET image_url = 'images/62.webp'
+WHERE id = 62;
+
+UPDATE products
+SET image_url = 'images/63.avif'
+WHERE id = 63;
+
+UPDATE products
+SET image_url = 'images/64.jpg'
+WHERE id = 64;
+
+UPDATE products
+SET image_url = 'images/65.jpg'
+WHERE id = 65;
+
+UPDATE products
+SET image_url = 'images/66.jpg'
+WHERE id = 66;
+
+UPDATE products
+SET image_url = 'images/67.jpg'
+WHERE id = 67;
+
+UPDATE products
+SET image_url = 'images/68.jpeg'
+WHERE id = 68;
+
+UPDATE products
+SET image_url = 'images/69.jpg'
+WHERE id = 69;
+
+UPDATE products
+SET image_url = 'images/70.jpg'
+WHERE id = 70;
+
+UPDATE products
+SET image_url = 'images/71.jpg'
+WHERE id = 71;
+
+UPDATE products
+SET image_url = 'images/72.webp' 
+WHERE id = 72;
+
+UPDATE products
+SET image_url = 'images/73.jpg'
+WHERE id = 73;
 
 
 -- INSERT INTO `categories` (`id`, `name`) VALUES
@@ -421,8 +660,117 @@ CREATE TABLE IF NOT EXISTS product_variants (
 );
 --------------------------------------------------------
 
-INSERT INTO product_variants (product_id, size_ml, price, stock)
-VALUES
+INSERT INTO product_variants (product_id, size_ml, price, stock) VALUES
 (1, 50, 19990, 10),
-(1, 100, 29990, 7);
+(1, 100, 29990, 7),
+(2, 50, 14990, 15),
+(2, 100, 15990, 20),
+(3, 75, 9990, 22),
+(3, 100, 12990, 12),
+(5, 50, 21990, 12),
+(5, 100, 35990, 18),
+(6, 50, 34990, 12),
+(6, 100, 43990, 8),
+(7, 50, 22990, 10),
+(7, 100, 33990, 20),
+(8, 50, 21990, 9),
+(8, 100, 29990, 14),
+(9, 50, 24990, 11),
+(9, 100, 31990, 16),
+(10, 50, 29990, 5),
+(10, 80, 36990, 10),
+(11, 50, 25990, 12),
+(11, 100, 38990, 13),
+(12, 60, 35990, 11),
+(13, 50, 17990, 20),
+(13, 100, 19990, 22),
+(14, 50, 32990, 17),
+(14, 100, 39990, 8),
+(15, 50, 27990, 14),
+(15, 100, 33990, 19),
+(16, 50, 24990, 10),
+(16, 80, 34990, 14),
+(17, 50, 21990, 12),
+(17, 75, 25990, 18),
+(18, 50, 29990, 14),
+(18, 100, 32990, 20),
+(19, 50, 28990, 13),
+(20, 50, 36990, 11),
+(21, 75, 29990, 9),
+(21, 125, 33990, 15),
+(22, 50, 31990, 10),
+(22, 80, 35990, 12),
+(23, 50, 29990, 10),
+(23, 100, 37990, 16),
+(24, 50, 34990, 15),
+(25, 50, 29990, 10),
+(25, 100, 32990, 14),
+(26, 50, 35990, 13),
+(27, 50, 29990, 12),
+(27, 100, 33990, 16),
+(28, 50, 34990, 12),
+(29, 50, 25990, 15),
+(29, 100, 27990, 18),
+(30, 50, 28990, 17),
+(31, 50, 24990, 14),
+(31, 100, 29990, 19),
+(32, 50, 29990, 12),
+(32, 75, 33990, 15),
+(33, 50, 34990, 12),
+(34, 50, 35990, 14),
+(35, 75, 37990, 10),
+(36, 50, 25990, 12),
+(36, 100, 29990, 16),
+(37, 50, 28990, 13),
+(38, 50, 23990, 15),
+(38, 100, 25990, 18),
+(39, 50, 26990, 17),
+(40, 50, 27990, 12),
+(40, 100, 29990, 15),
+(41, 50, 31990, 16),
+(42, 50, 28990, 12),
+(42, 100, 30990, 17),
+(43, 50, 32990, 11),
+(44, 50, 29990, 10),
+(44, 100, 32990, 14),
+(45, 50, 34990, 13),
+(46, 50, 31990, 10),
+(46, 100, 33990, 12),
+(47, 65, 28990, 16),
+(48, 50, 29990, 11),
+(48, 100, 32990, 13),
+(49, 50, 31990, 12),
+(50, 50, 28990, 17),
+(51, 50, 24990, 12),
+(51, 100, 29990, 19),
+(52, 100, 27990, 14),
+(53, 50, 33990, 11),
+(54, 50, 27990, 10),
+(54, 100, 30990, 15),
+(55, 50, 29990, 8),
+(55, 100, 34990, 10),
+(56, 100, 33990, 16),
+(57, 50, 34990, 12),
+(58, 50, 29990, 11),
+(58, 100, 33990, 14),
+(59, 50, 34990, 13),
+(60, 50, 27990, 12),
+(60, 100, 29990, 15),
+(61, 50, 32990, 7),
+(61, 100, 37990, 9),
+(62, 100, 39990, 8),
+(63, 100, 39990, 8),
+(64, 100, 38990, 10),
+(65, 50, 69990, 7),
+(66, 50, 64990, 6),
+(67, 50, 69990, 6),
+(68, 50, 42990, 8),
+(68, 100, 45990, 9),
+(69, 50, 42990, 8),
+(69, 100, 45990, 10),
+(70, 50, 42990, 10),
+(70, 100, 45990, 11),
+(71, 50, 25990, 18),
+(72, 50, 26990, 17),
+(73, 50, 24990, 19);
 
