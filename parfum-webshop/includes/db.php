@@ -13,12 +13,12 @@ $options = [
 ];
 
 try {
+
   $pdo = new PDO(
-    "mysql:host={$DB_HOST};dbname={$DB_NAME};charset=utf8mb4",
-    $DB_USER,
-    $DB_PASS,
-    $options
-  );
+    "mysql:host=127.0.0.1;dbname=parfum_webshop;charset=utf8",
+    "root",
+    ""
+);
 } catch (PDOException $e) {
   die("DB kapcsolat hiba: " . htmlspecialchars($e->getMessage()));
 }
