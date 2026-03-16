@@ -141,7 +141,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `brand`, `description`, `price`, `stock`, `category_id`, `image_url`, `created_at`) VALUES
-(1, 'Rose Bloom EDP 50ml', 'Flora', 'Virágos-gyümölcsös, mindennapokra.', 12990, 13, 1, NULL, '2026-01-29 15:05:14'),
+(1, 'Rose Bloom EDP 50ml', 'Flora', 'Virágos-gyümölcsös, mindennapokra.', 12990, 20, 1, NULL, '2026-01-29 15:05:14'),
 (2, 'Night Cedar EDT 100ml', 'Nord', 'Fás, friss, elegáns.', 15990, 7, 2, NULL, '2026-01-29 15:05:14'),
 (3, 'Citrus Mist EDC 75ml', 'Aqua', 'Citrusos, könnyed.', 9990, 18, 3, NULL, '2026-01-29 15:05:14');
 

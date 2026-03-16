@@ -61,28 +61,39 @@ $cats = $pdo->query("SELECT id, name FROM categories ORDER BY name")->fetchAll()
 
 <hr>
 
+<div class="product-grid">
 <?php foreach ($products as $p): ?>
-  <div style="margin-bottom:14px;">
-    <strong><?=h($p['brand'])?> – <?=h($p['name'])?></strong>
-    (<?=h($p['category_name'])?>) <br>
-    Ár: <?= (int)$p['price'] ?> Ft | Készlet: <?= (int)$p['stock'] ?><br>
-    <a href="product.php?id=<?= (int)$p['id'] ?>">Részletek</a>
+  <div class="product-card">
+    <div class="product-image">
+      <?php if (!empty($p['image_url'])): ?>
+        <img src="<?=h($p['image_url'])?>" alt="<?=h($p['name'])?>">
+      <?php endif; ?>
+    </div>
+    <div class="product-name"><?=h($p['name'])?></div>
+    <div class="product-brand"><?=h($p['brand'])?></div>
+    <div class="product-category">(<?=h($p['category_name'])?>)</div>
+    <div class="product-price">Ár: <?= (int)$p['price'] ?> Ft</div>
+    <div class="product-stock">Készlet: <?= (int)$p['stock'] ?></div>
+    <div class="product-links">
+      <a href="product.php?id=<?= (int)$p['id'] ?>">Részletek</a>
+    </div>
     <?php if (is_logged_in()): ?>
       <?php if ((int)$p['stock'] > 0): ?>
-        <form method="post" action="cart.php" style="display:inline;">
+        <form class="add-to-cart-form" method="post" action="cart.php">
           <input type="hidden" name="action" value="add">
           <input type="hidden" name="product_id" value="<?=$p['id']?>">
-          <input type="number" name="qty" value="1" min="1" max="<?=$p['stock']?>" style="width:60px;">
+          <input type="number" name="qty" value="1" min="1" max="<?=$p['stock']?>">
           <button type="submit">Kosárba</button>
         </form>
       <?php else: ?>
-        <em>Elfogyott</em>
+        <div class="sold-out">Elfogyott</div>
       <?php endif; ?>
     <?php else: ?>
-      <em>(Kosárhoz jelentkezz be)</em>
+      <div class="sold-out">(Kosárhoz jelentkezz be)</div>
     <?php endif; ?>
   </div>
 <?php endforeach; ?>
+</div>
 
 </body>
 </html>
