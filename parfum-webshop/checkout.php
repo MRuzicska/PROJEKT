@@ -80,6 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head><meta charset="utf-8"><title>Rendelés</title>
 <link rel="stylesheet" href="css/checkout.css"></head>
 <body>
+  
 <h1>Rendelés leadása</h1>
 <p><a href="cart.php">← Vissza a kosárhoz</a></p>
 

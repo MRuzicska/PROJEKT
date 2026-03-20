@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head><meta charset="utf-8"><title>Bejelentkezés</title>
 <link rel="stylesheet" href="css/login.css"></head>
 <body>
+  
 <h1>Bejelentkezés</h1>
 <?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>
 <form method="post">

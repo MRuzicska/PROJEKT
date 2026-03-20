@@ -3,98 +3,93 @@ require __DIR__ . '/includes/db.php';
 require __DIR__ . '/includes/auth.php';
 require __DIR__ . '/includes/functions.php';
 
-$search = isset($_GET['search']) ? trim((string)$_GET['search']) : '';
-$cat = get_int('category_id', 0);
-$brand = isset($_GET['brand']) ? trim((string)$_GET['brand']) : '';
-$price_range = isset($_GET['price_range']) ? trim((string)$_GET['price_range']) : '';
+// Slider képek
+$sliderImages = [
+    "images/slider1.jpg",
+    "images/slider2.webp",
+    "images/slider3.webp",
+    "images/slider4.webp",
+    "images/slider5.webp",
+];
 
-$sql = "SELECT p.*, c.name AS category_name
-        FROM products p
-        JOIN categories c ON c.id = p.category_id
-        WHERE 1=1";
-$params = [];
-
-if ($search !== '') {
-  $sql .= " AND (p.name LIKE ? OR p.brand LIKE ?)";
-  $params[] = "%{$search}%";
-  $params[] = "%{$search}%";
-}
-if ($cat > 0) {
-  $sql .= " AND p.category_id = ?";
-  $params[] = $cat;
-}
-if ($brand !== '') {
-  $sql .= " AND p.brand = ?";
-  $params[] = $brand;
-}
-if ($price_range !== '') {
-  if ($price_range === '0-10000') {
-    $sql .= " AND p.price BETWEEN 0 AND 10000";
-  } elseif ($price_range === '10000-20000') {
-    $sql .= " AND p.price BETWEEN 10000 AND 20000";
-  } elseif ($price_range === '20000-30000') {
-    $sql .= " AND p.price BETWEEN 20000 AND 30000";
-  } elseif ($price_range === '30000+') {
-    $sql .= " AND p.price >= 30000";
-  }
-}
-$sql .= " ORDER BY p.id DESC";
-
-$stmt = $pdo->prepare($sql);
-$stmt->execute($params);
-$products = $stmt->fetchAll();
-
-$cats = $pdo->query("SELECT id, name FROM categories ORDER BY name")->fetchAll();
-$brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fetchAll();
+// Termékek
+$products = $pdo->query("
+    SELECT p.*, c.name AS category_name
+    FROM products p
+    JOIN categories c ON c.id = p.category_id
+    ORDER BY p.id DESC
+")->fetchAll();
 ?>
-<!doctype html>
+<!DOCTYPE html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Parfüm webshop</title>
-<link rel="stylesheet" href="css/style.css"></head>
+<head>
+<meta charset="utf-8">
+<title>Parfum p'Dm</title>
+<link rel="stylesheet" href="css/index.css">
+</head>
 <body>
-<h1>Parfüm webshop</h1>
 
-<p>
-<?php if (is_logged_in()): ?>
-  Szia, <?=h((string)$_SESSION['user_name'])?>! |
-  <a href="cart.php">Kosár</a> |
-  <a href="orders.php">Rendeléseim</a> |
-  <?php if (is_admin()): ?><a href="admin/index.php">Admin</a> |<?php endif; ?>
-  <a href="logout.php">Kilépés</a>
-<?php else: ?>
-  <a href="login.php">Belépés</a> | <a href="register.php">Regisztráció</a>
-<?php endif; ?>
-</p>
+<!-- ===== NAVBAR ===== -->
+<header class="navbar">
+    <div class="logo">
+        <img src="images/logo-placeholder.png" alt="Parfum p'Dm Logo">
+        <span>Parfum p'Dm</span>
+        <button class="hamburger" onclick="toggleMenu()">☰</button>
+    </div>
+    <nav class="nav-links">
+        <a href="products.php">Összes parfüm</a>
+        <a href="products.php?gender=ferfi">Csak férfi</a>
+        <a href="products.php?gender=noi">Csak női</a>
+        <a href="products.php?gender=unisex">Csak unisex</a>
+        <input type="text" placeholder="Keresés..." class="search-input">
+    </nav>
+    <div class="nav-actions">
+        <div class="cart-wrapper">
+            <button onclick="toggleCart()">🛒 Kosár</button>
+            <div class="dropdown cart-dropdown">
+                <p>Kosár tartalma...</p>
+                <a href="cart.php" class="btn-small">Kosár megnyitása</a>
+            </div>
+        </div>
+        <div class="profile-wrapper">
+            <button onclick="toggleProfile()">👤 Profil</button>
+            <div class="dropdown profile-dropdown">
+                <?php if(is_logged_in()): ?>
+                    <p>Üdvözlünk, <?=h($_SESSION['username'] ?? 'Felhasználó')?>!</p>
+                    <?php if(is_admin()): ?>
+                        <a href="admin.php" class="btn-small">Admin</a>
+                    <?php endif; ?>
+                    <a href="logout.php" class="btn-small">Kijelentkezés</a>
+                <?php else: ?>
+                    <a href="login.php" class="btn-small">Bejelentkezés</a>
+                    <a href="register.php" class="btn-small">Regisztráció</a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+</header>
 
-<form method="get">
-  <input name="search" placeholder="Keresés név vagy márka szerint..." value="<?=h($search)?>">
-  <select name="category_id">
-    <option value="0">Összes kategória</option>
-    <?php foreach ($cats as $c): ?>
-      <option value="<?=$c['id']?>" <?=$cat===(int)$c['id']?'selected':''?>><?=h($c['name'])?></option>
-    <?php endforeach; ?>
-  </select>
-  <select name="brand">
-    <option value="">Összes márka</option>
-    <?php foreach ($brands as $b): ?>
-      <option value="<?=h($b['brand'])?>" <?=$brand===$b['brand']?'selected':''?>><?=h($b['brand'])?></option>
-    <?php endforeach; ?>
-  </select>
-  <select name="price_range">
-    <option value="">Összes ár</option>
-    <option value="0-10000" <?=$price_range==='0-10000'?'selected':''?>>0 - 10 000 Ft</option>
-    <option value="10000-20000" <?=$price_range==='10000-20000'?'selected':''?>>10 000 - 20 000 Ft</option>
-    <option value="20000-30000" <?=$price_range==='20000-30000'?'selected':''?>>20 000 - 30 000 Ft</option>
-    <option value="30000+" <?=$price_range==='30000+'?'selected':''?>>30 000 Ft felett</option>
-  </select>
-  <button type="submit">Szűrés</button>
-</form>
+<!-- ===== SLIDER ===== -->
+<div class="slider">
+    <a class="prev" href="javascript:void(0)" onclick="prevSlide()">&#10094;</a>
+    <div class="slide-image">
+        <img id="slider-img" src="<?= $sliderImages[0] ?>" alt="Slider">
+    </div>
+    <a class="next" href="javascript:void(0)" onclick="nextSlide()">&#10095;</a>
+</div>
 
-<hr>
+<div class="info-text">
+    <p>
+        Fedezd fel a parfümök világát! 💧 Kínálatunkban a klasszikus aromáktól a modern, trendi illatokig mindent megtalálsz. 
+        Ne hagyd, hogy az unalmas napok eluralkodjanak – egy igazán jó illat mindig feldobja a hangulatod!  
+        Kattints, szagolj, élvezd – a parfüm nem csak egy illat, hanem élmény is.
+    </p>
+</div>
 
-<div class="product-grid">
+<!-- ===== TERMÉKKÁRTYÁK ===== -->
+<div class="product-grid" id="product-grid">
 <?php foreach ($products as $p): ?>
-  <div class="product-card">
+  <a href="product.php?id=<?= (int)$p['id'] ?>" class="product-card">
     <div class="product-image">
       <?php if (!empty($p['image_url'])): ?>
         <img src="<?=h($p['image_url'])?>" alt="<?=h($p['name'])?>">
@@ -105,26 +100,45 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
     <div class="product-category">(<?=h($p['category_name'])?>)</div>
     <div class="product-price">Ár: <?= (int)$p['price'] ?> Ft</div>
     <div class="product-stock">Készlet: <?= (int)$p['stock'] ?></div>
-    <div class="product-links">
-      <a href="product.php?id=<?= (int)$p['id'] ?>">Részletek</a>
-    </div>
-    <?php if (is_logged_in()): ?>
-      <?php if ((int)$p['stock'] > 0): ?>
-        <form class="add-to-cart-form" method="post" action="cart.php">
-          <input type="hidden" name="action" value="add">
-          <input type="hidden" name="product_id" value="<?=$p['id']?>">
-          <input type="number" name="qty" value="1" min="1" max="<?=$p['stock']?>">
-          <button type="submit">Kosárba</button>
-        </form>
-      <?php else: ?>
-        <div class="sold-out">Elfogyott</div>
-      <?php endif; ?>
-    <?php else: ?>
-      <div class="sold-out">(Kosárhoz jelentkezz be)</div>
-    <?php endif; ?>
-  </div>
+  </a>
 <?php endforeach; ?>
 </div>
 
+<!-- Termék lapozás -->
+<div class="slider-nav">
+    <button onclick="prevProducts()">← Előző</button>
+    <button onclick="nextProducts()">Következő →</button>
+    <a href="products.php" class="all-products">Összes parfüm</a>
+</div>
+
+<script>
+/* ===== SLIDER JS ===== */
+const sliderImages = <?= json_encode($sliderImages) ?>;
+let slideIndex = 0;
+const sliderImgEl = document.getElementById('slider-img');
+function showSlide(i){slideIndex=(i+sliderImages.length)%sliderImages.length;sliderImgEl.src=sliderImages[slideIndex];}
+function nextSlide(){showSlide(slideIndex+1);}
+function prevSlide(){showSlide(slideIndex-1);}
+setInterval(nextSlide,5000);
+
+/* ===== TERMÉKLAPOZÁS JS ===== */
+const productsPerPage=4;
+let productPage=0;
+const productGrid=document.getElementById('product-grid');
+const productCards=Array.from(productGrid.children);
+function showProductPage(page){
+    productPage=page;
+    const start=page*productsPerPage,end=start+productsPerPage;
+    productCards.forEach((card,i)=>{card.style.display=(i>=start&&i<end)?'flex':'none';});
+}
+function nextProducts(){const maxPage=Math.ceil(productCards.length/productsPerPage)-1;showProductPage(productPage<maxPage?productPage+1:0);}
+function prevProducts(){const maxPage=Math.ceil(productCards.length/productsPerPage)-1;showProductPage(productPage>0?productPage-1:maxPage);}
+showSlide(0);showProductPage(0);
+
+/* ===== NAVBAR DROPDOWN JS ===== */
+function toggleMenu(){document.querySelector('.nav-links').classList.toggle('show');}
+function toggleCart(){document.querySelector('.cart-dropdown').classList.toggle('show');}
+function toggleProfile(){document.querySelector('.profile-dropdown').classList.toggle('show');}
+</script>
 </body>
 </html>

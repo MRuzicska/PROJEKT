@@ -1,5 +1,10 @@
-<?php
-declare(strict_types=1);
+<?php declare(strict_types=1);
+
+
+if (!isset($_GET['id']) || (int)$_GET['id'] <= 0) {
+  header("Location: products.php");
+  exit;
+}
 
 require __DIR__ . '/includes/db.php';
 require __DIR__ . '/includes/functions.php';
@@ -23,6 +28,7 @@ if (!$product) {
   http_response_code(404);
   exit('A termék nem található.');
 }
+
 
 /**
  * Kiszerelések (variantok) betöltése:
@@ -56,6 +62,7 @@ if ($selectedVariantId === 0 && $variants) {
   <title><?= h($product['brand'] . ' – ' . $product['name']) ?></title>
 </head>
 <body>
+  
 
 <p><a href="index.php">← Vissza a parfümökhöz</a></p>
 

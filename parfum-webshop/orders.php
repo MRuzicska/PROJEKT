@@ -15,6 +15,7 @@ $rows = $orders->fetchAll();
 <head><meta charset="utf-8"><title>Rendeléseim</title>
 <link rel="stylesheet" href="css/orders.css"></head>
 <body>
+  
 <h1>Rendeléseim</h1>
 <p><a href="index.php">← Termékek</a></p>
 

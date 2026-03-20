@@ -81,6 +81,7 @@ foreach ($items as $it) $total += (int)$it['price'] * (int)$it['quantity'];
 <head><meta charset="utf-8"><title>Kosár</title>
 <link rel="stylesheet" href="css/cart.css"></head>
 <body>
+  
 <h1>Kosár</h1>
 <p><a href="index.php">← Vissza a termékekhez</a></p>
 
