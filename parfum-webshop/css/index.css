@@ -146,7 +146,7 @@ h1 {
 
 .slide-image img {
   width: 100%;
-  height: 400px;
+  height: 700px;
   object-fit: cover;
   display: block;
 }
@@ -319,4 +319,37 @@ h1 {
   .slide-image img {
     height: 250px;
   }
+}
+
+.mobile-menu {
+  display: none;
+  position: absolute;
+  top: 70px;
+  left: 0;
+  width: 100%;
+  background: rgba(15, 23, 42, 0.95);
+  padding: 15px;
+  border-radius: 0 0 14px 14px;
+  z-index: 999;
+}
+
+.mobile-menu a {
+  display: block;
+  padding: 10px;
+  margin: 5px 0;
+  background: #183B4E;
+  color: #DDA853;
+  text-decoration: none;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.mobile-menu a:hover {
+  background: #DDA853;
+  color: #1a1a1a;
+}
+
+.mobile-menu.show {
+  display: block;
 }
