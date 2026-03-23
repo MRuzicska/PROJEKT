@@ -83,7 +83,7 @@ foreach ($items as $it) $total += (int)$it['price'] * (int)$it['quantity'];
 <body>
   
 <h1>Kosár</h1>
-<p><a href="index.php">← Vissza a termékekhez</a></p>
+
 
 <?php if (!$items): ?>
   <p>A kosár üres.</p>
@@ -94,6 +94,7 @@ foreach ($items as $it) $total += (int)$it['price'] * (int)$it['quantity'];
       $sub = (int)$it['price'] * (int)$it['quantity'];
     ?>
       <tr>
+  
         <td><?=h($it['brand'])?> – <?=h($it['name'])?></td>
         <td><?= (int)$it['price'] ?> Ft</td>
         <td>
@@ -115,9 +116,9 @@ foreach ($items as $it) $total += (int)$it['price'] * (int)$it['quantity'];
       </tr>
     <?php endforeach; ?>
   </table>
-
   <p><strong>Összesen: <?=$total?> Ft</strong></p>
-  <p><a href="checkout.php">Tovább a rendeléshez →</a></p>
+  <p><a href="index.php"><button class="btnn"> ← Vissza a termékekhez </button> </a></p>
+  <p><a href="checkout.php"> <button class="btn"> Tovább a rendeléshez → </button> </a></p>
 <?php endif; ?>
 </body>
 </html>

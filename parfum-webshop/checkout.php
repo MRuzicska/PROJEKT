@@ -22,6 +22,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $shipping_address = post('shipping_address');
   $shipping_phone = post('shipping_phone');
 
+$email = post('shipping_email');
+
+// ÜRES + HIBÁS EMAIL ELLENŐRZÉS
+if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+  $error = "Adj meg egy érvényes email címet.";
+}
+
   if ($shipping_name === '' || $shipping_address === '' || $shipping_phone === '') {
     $error = "Minden szállítási adat kötelező.";
   } else {
@@ -40,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           }
           $total += (int)$it['price'] * (int)$it['quantity'];
         }
-
         // orders insert
         $pdo->prepare(
           "INSERT INTO orders (user_id, total_price, status, shipping_name, shipping_address, shipping_phone)
@@ -82,14 +88,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
   
 <h1>Rendelés leadása</h1>
-<p><a href="cart.php">← Vissza a kosárhoz</a></p>
+<a href="cart.php"><button class="btn"> ← Vissza a kosárhoz </button> </a>
 
 <?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>
 
 <form method="post">
   <label>Név: <input name="shipping_name" value="<?=h(post('shipping_name'))?>"></label><br>
-  <label>Cím: <input name="shipping_address" value="<?=h(post('shipping_address'))?>"></label><br>
   <label>Telefon: <input name="shipping_phone" value="<?=h(post('shipping_phone'))?>"></label><br>
+  <label>Email: <input type="email" name="shipping_email" value="<?=h(post('shipping_email'))?>" required></label><br>
+  <label>Cím: <input name="shipping_address" value="<?=h(post('shipping_address'))?>"></label><br>
   <button type="submit">Megrendelés</button>
 </form>
 </body>

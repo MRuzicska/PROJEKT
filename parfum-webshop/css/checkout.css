@@ -1,6 +1,6 @@
 body{
-  background: #f4f6f9;
-  color: #1f2937;
+  background: #686852;
+  color: #4da3ff;
   font-family: "Segoe UI", Arial, sans-serif;
   margin: 0;
   padding: 24px;
@@ -59,10 +59,10 @@ body > p[style*="color:red"]{
 /* Form card */
 form[method="post"]{
   width: min(480px, 92vw);
-  background: #ffffff;
+  background: rgb(24, 23, 23);
   border: 1px solid #e5e7eb;
   border-radius: 16px;
-  padding: 18px;
+  padding: 30px;
   box-shadow: 0 12px 30px rgba(16, 24, 40, 0.08);
 }
 
@@ -116,7 +116,20 @@ form[method="post"] button[type="submit"]{
 form[method="post"] button[type="submit"]:hover{
   background: #059669;
 }
-
+.btn {
+  
+ display: inline-block; /* ne legyen block, így nem tölti ki a sort */
+  padding: 10px 20px;
+  background-color: #4da3ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+  margin: 10px 0; /* csak felül-alul tér */
+}
 /* Mobile tweaks */
 @media (max-width: 480px){
   body{ padding: 16px; }
