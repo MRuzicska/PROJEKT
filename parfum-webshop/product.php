@@ -24,6 +24,17 @@ if (!$product) {
   http_response_code(404);
   exit('A termék nem található.');
 }
+
+$relatedProducts = $pdo->prepare("
+  SELECT p.*, c.name AS category_name
+  FROM products p
+  JOIN categories c ON c.id = p.category_id
+  WHERE p.id != ?
+  ORDER BY p.id DESC
+  LIMIT 12
+");
+$relatedProducts->execute([$id]);
+$related = $relatedProducts->fetchAll();
 ?>
 <!DOCTYPE html>
 <html lang="hu">
@@ -32,6 +43,7 @@ if (!$product) {
   <meta charset="utf-8">
   <title><?= h($product['brand'] . ' – ' . $product['name']) ?></title>
   <link rel="stylesheet" href="css/product.css">
+  <link rel="stylesheet" href="css/products.css">
 </head>
 
 <body>
@@ -40,7 +52,7 @@ if (!$product) {
   <header class="navbar">
     <div class="logo">
       <img src="images/logo-placeholder.png" alt="">
-      <span>Parfum p'Dm</span>
+      <a href="../index.php">Parfum p'Dm</a>
     </div>
     <nav class="nav-links desktop-menu">
       <a href="products.php">Összes parfüm</a>
@@ -201,66 +213,121 @@ if (!$product) {
     </div>
   </header>
   <main class="page-container">
-  <!-- ===== PRODUCT LAYOUT ===== -->
-  <div class="product-container">
+    <!-- ===== PRODUCT LAYOUT ===== -->
+    <div class="product-container">
 
-    <!-- BAL OLDAL: KÉP -->
-    <div class="product-image">
-      <?php if (!empty($product['image_url'])): ?>
-        <img src="<?= h($product['image_url']) ?>" alt="<?= h($product['name']) ?>">
-      <?php endif; ?>
-    </div>
-
-    <!-- JOBB OLDAL: INFÓ -->
-    <div class="product-info">
-
-      <h1><?= h($product['brand']) ?> – <?= h($product['name']) ?></h1>
-
-      <p class="category">
-        Kategória: <?= h($product['category_name'] ?? '-') ?>
-      </p>
-
-      <!-- ===== IDE JÖN A PARFÜM LEÍRÁS (ÜRES HELY) ===== -->
-      <div class="description-box">
-        <!-- IDE ÍRD MAJD A LEÍRÁST -->
+      <!-- BAL OLDAL: KÉP -->
+      <div class="product-image">
+        <?php if (!empty($product['image_url'])): ?>
+          <img src="<?= h($product['image_url']) ?>" alt="<?= h($product['name']) ?>">
+        <?php endif; ?>
       </div>
 
-      <p class="price">
-        Ár: <?= (int) $product['price'] ?> Ft
-      </p>
+      <!-- JOBB OLDAL: INFÓ -->
+      <div class="product-info">
 
-      <p class="stock">
-        Készlet: <?= (int) $product['stock'] ?>
-      </p>
+        <h1><?= h($product['brand']) ?> – <?= h($product['name']) ?></h1>
 
-      <!-- ===== KISZERELÉS (HA AKARSZ MÉG FEJLESZTENI) ===== -->
-      <form method="post" action="cart_add.php">
-        <label>Darab:</label>
-        <input type="number" name="qty" min="1" value="1">
+        <p class="category">
+          Kategória: <?= h($product['category_name'] ?? '-') ?>
+        </p>
 
-        <button type="submit">Kosárba</button>
-      </form>
+        <!-- ===== IDE JÖN A PARFÜM LEÍRÁS (ÜRES HELY) ===== -->
+        <div class="description-box">
+          <!-- IDE ÍRD MAJD A LEÍRÁST -->
+        </div>
 
-      <a href="index.php" class="back-link">← Vissza</a>
+        <p class="price">
+          Ár: <?= (int) $product['price'] ?> Ft
+        </p>
+
+        <p class="stock">
+          Készlet: <?= (int) $product['stock'] ?>
+        </p>
+
+        <!-- ===== KISZERELÉS (HA AKARSZ MÉG FEJLESZTENI) ===== -->
+        <form method="post" action="cart_add.php">
+          <label>Darab:</label>
+          <input type="number" name="qty" min="1" value="1">
+
+          <button type="submit">Kosárba</button>
+        </form>
+
+        <a href="index.php" class="back-link">← Vissza</a>
+
+      </div>
 
     </div>
 
-  </div>
+    <h2 style="margin-top:40px;">Kapcsolódó termékek</h2>
 
-  <script>
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('show');
-    }
-    function toggleCart() {
-      document.querySelector('.cart-dropdown').classList.toggle('show');
-    }
+    <div class="product-grid" id="related-grid">
+      <?php foreach ($related as $p): ?>
+        <a href="product.php?id=<?= (int) $p['id'] ?>" class="product-card">
+          <div class="product-image">
+            <?php if (!empty($p['image_url'])): ?>
+              <img src="<?= h($p['image_url']) ?>" alt="<?= h($p['name']) ?>">
+            <?php endif; ?>
+          </div>
+          <div class="product-name"><?= h($p['name']) ?></div>
+          <div class="product-brand"><?= h($p['brand']) ?></div>
+          <div class="product-category">(<?= h($p['category_name']) ?>)</div>
+          <div class="product-price"><?= (int) $p['price'] ?> Ft</div>
+        </a>
+      <?php endforeach; ?>
+    </div>
 
-    function toggleProfile() {
-      document.querySelector('.profile-dropdown').classList.toggle('show');
-    }
-  </script>
+    <!-- Termék lapozás -->
+    <div class="slider-nav">
+      <button onclick="prevProducts()">← Előző</button>
+      <button onclick="nextProducts()">Következő →</button>
+      <a href="products.php" class="all-products">Összes parfüm</a>
+    </div>
 
-</main>
+    <script>
+
+      
+
+      const productsPerPage = 4;
+      let productPage = 0;
+      const productGrid = document.getElementById('related-grid');
+      const productCards = Array.from(productGrid.children);
+
+      function showProductPage(page) {
+        productPage = page;
+        const start = page * productsPerPage;
+        const end = start + productsPerPage;
+
+        productCards.forEach((card, i) => {
+          card.style.display = (i >= start && i < end) ? 'flex' : 'none';
+        });
+      }
+
+      function nextProducts() {
+        const maxPage = Math.ceil(productCards.length / productsPerPage) - 1;
+        showProductPage(productPage < maxPage ? productPage + 1 : 0);
+      }
+
+      function prevProducts() {
+        const maxPage = Math.ceil(productCards.length / productsPerPage) - 1;
+        showProductPage(productPage > 0 ? productPage - 1 : maxPage);
+      }
+
+      showProductPage(0);
+
+      function toggleMenu() {
+        document.getElementById('mobileMenu').classList.toggle('show');
+      }
+      function toggleCart() {
+        document.querySelector('.cart-dropdown').classList.toggle('show');
+      }
+
+      function toggleProfile() {
+        document.querySelector('.profile-dropdown').classList.toggle('show');
+      }
+    </script>
+
+  </main>
 
 </body>
 

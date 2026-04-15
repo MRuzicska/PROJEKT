@@ -37,6 +37,12 @@ body {
     margin: 0 10px;
     text-decoration: none;
   }
+
+  .navbar a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+  }
   
   .nav-actions {
     display: flex;
@@ -45,6 +51,7 @@ body {
   
   .nav-actions button {
     background: #DDEB9D;
+    color: black;
     border: none;
     padding: 8px 12px;
     border-radius: 6px;
@@ -150,6 +157,20 @@ body {
     font-weight: bold;
     border-radius: 8px;
     cursor: pointer;
+    font-size: 15px;
+  }
+
+  .slider-nav a{
+    margin-top: 10px;
+    padding: 12px 18px;
+    border: none;
+    background: #DDEB9D;
+    color: #183B4E;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 15px;
   }
   
   /* BACK LINK */
@@ -175,6 +196,22 @@ body {
   
   table th {
     background: #0f2a38;
+  }
+
+  #related-grid {
+    display: flex;
+    gap: 20px;
+  }
+
+  .product-grid{
+    justify-content: center;
+  }
+
+  .slider-nav{
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 10px;
   }
   
   /* ===== RESPONSIVE ===== */
