@@ -28,11 +28,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head><meta charset="utf-8"><title>Bejelentkezés</title>
 <link rel="stylesheet" href="css/login.css"></head>
 <body>
-  
+
 <header class="navbar">
     <div class="logo">
-      <img src="images/logo-placeholder.png" alt="">
-      <a href="../index.php">Parfum p'Dm</a>
+      <a href="index.php">Parfum p'Dm</a>
     </div>
     <nav class="nav-links desktop-menu">
       <a href="products.php">Összes parfüm</a>
@@ -192,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
     </div>
   </header>
-
+  
 <h1>Bejelentkezés</h1>
 <?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>
 <form method="post">
@@ -201,18 +200,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <button type="submit">Belépés</button>
 </form>
 <p><a href="register.php">Regisztráció</a></p>
-
-<script>
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('show');
-    }
-    function toggleCart() {
-      document.querySelector('.cart-dropdown').classList.toggle('show');
-    }
-
-    function toggleProfile() {
-      document.querySelector('.profile-dropdown').classList.toggle('show');
-    }
-  </script>
 </body>
 </html>

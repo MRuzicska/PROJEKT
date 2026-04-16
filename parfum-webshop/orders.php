@@ -18,8 +18,7 @@ $rows = $orders->fetchAll();
 
 <header class="navbar">
     <div class="logo">
-      <img src="images/logo-placeholder.png" alt="">
-      <a href="../index.php">Parfum p'Dm</a>
+      <a href="index.php">Parfum p'Dm</a>
     </div>
     <nav class="nav-links desktop-menu">
       <a href="products.php">Összes parfüm</a>
@@ -198,18 +197,5 @@ $rows = $orders->fetchAll();
     <?php endforeach; ?>
   </table>
 <?php endif; ?>
-
-<script>
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('show');
-    }
-    function toggleCart() {
-      document.querySelector('.cart-dropdown').classList.toggle('show');
-    }
-
-    function toggleProfile() {
-      document.querySelector('.profile-dropdown').classList.toggle('show');
-    }
-  </script>
 </body>
 </html>

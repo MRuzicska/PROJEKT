@@ -34,8 +34,7 @@ $products = $pdo->query("
     <!-- ===== NAVBAR ===== -->
     <header class="navbar">
     <div class="logo">
-      <img src="images/logo-placeholder.png" alt="">
-      <a href="../index.php">Parfum p'Dm</a>
+      <a href="index.php">Parfum p'Dm</a>
     </div>
     <nav class="nav-links desktop-menu">
       <a href="products.php">Összes parfüm</a>

@@ -132,6 +132,7 @@ function statusClass($s) {
     .btn-primary { background:#1f6feb; color:#fff; border-color:#1f6feb; }
     select { padding:8px; border-radius:10px; border:1px solid #ddd; }
     .error { background:#f8d7da; padding:10px; border-radius:10px; margin:10px 0; }
+
     .navbar {
     display: flex;
     justify-content: space-between;
@@ -149,17 +150,17 @@ function statusClass($s) {
   .navbar .logo img {
     height: 40px;
   }
+
+  .navbar a{
+    color: #DDA853;
+    text-decoration: none;
+    font-size: 20px;
+  }
   
   .nav-links a {
     color: #fff;
     margin: 0 10px;
     text-decoration: none;
-  }
-
-  .navbar a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
   }
   
   .nav-actions {
@@ -169,7 +170,6 @@ function statusClass($s) {
   
   .nav-actions button {
     background: #DDEB9D;
-    color: black;
     border: none;
     padding: 8px 12px;
     border-radius: 6px;
@@ -209,8 +209,7 @@ function statusClass($s) {
 
 <header class="navbar">
     <div class="logo">
-      <img src="images/logo-placeholder.png" alt="">
-      <a href="../index.php">Parfum p'Dm</a>
+      <a href="index.php">Parfum p'Dm</a>
     </div>
     <nav class="nav-links desktop-menu">
       <a href="products.php">Összes parfüm</a>
@@ -445,7 +444,7 @@ function statusClass($s) {
         </thead>
         <tbody>
           <?php foreach ($items as $it):
-            $sub = ((float)$it['unit_price']) * ((int)$it['qty']);
+            $sub = ((float)$it['unit_price']) * ((int)$it['qty'];
           ?>
             <tr>
               <td>
@@ -474,18 +473,5 @@ function statusClass($s) {
   </div>
 
 </div>
-
-<script>
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('show');
-    }
-    function toggleCart() {
-      document.querySelector('.cart-dropdown').classList.toggle('show');
-    }
-
-    function toggleProfile() {
-      document.querySelector('.profile-dropdown').classList.toggle('show');
-    }
-  </script>
 </body>
 </html>

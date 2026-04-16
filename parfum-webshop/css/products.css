@@ -39,17 +39,17 @@
   .navbar .logo img {
     height: 40px;
   }
+
+  .navbar a{
+    color: #DDA853;
+    text-decoration: none;
+    font-size: 20px;
+  }
   
   .nav-links a {
     color: #fff;
     margin: 0 10px;
     text-decoration: none;
-  }
-
-  .navbar a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
   }
   
   .nav-actions {

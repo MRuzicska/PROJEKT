@@ -55,8 +55,7 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
 
 <header class="navbar">
     <div class="logo">
-      <img src="images/logo-placeholder.png" alt="">
-      <a href="../index.php">Parfum p'Dm</a>
+      <a href="index.php">Parfum p'Dm</a>
     </div>
     <nav class="nav-links desktop-menu">
       <a href="products.php">Összes parfüm</a>
@@ -250,7 +249,6 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
 <div class="product-grid">
 <?php foreach ($products as $p): ?>
   <div class="product-card">
-  <a href="product.php?id=<?= (int)$p['id'] ?>" class="card-link">
     <div class="product-image">
       <?php if (!empty($p['image_url'])): ?>
         <img src="<?=h($p['image_url'])?>" alt="<?=h($p['name'])?>">
@@ -278,23 +276,9 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
     <?php else: ?>
       <div class="sold-out">(Kosárhoz jelentkezz be)</div>
     <?php endif; ?>
-    </a>
   </div>
 <?php endforeach; ?>
 </div>
-
-<script>
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('show');
-    }
-    function toggleCart() {
-      document.querySelector('.cart-dropdown').classList.toggle('show');
-    }
-
-    function toggleProfile() {
-      document.querySelector('.profile-dropdown').classList.toggle('show');
-    }
-  </script>
 
 </body>
 </html>

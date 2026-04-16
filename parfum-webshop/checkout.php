@@ -89,8 +89,7 @@ if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 
 <header class="navbar">
     <div class="logo">
-      <img src="images/logo-placeholder.png" alt="">
-      <a href="../index.php">Parfum p'Dm</a>
+      <a href="index.php">Parfum p'Dm</a>
     </div>
     <nav class="nav-links desktop-menu">
       <a href="products.php">Összes parfüm</a>
@@ -263,18 +262,5 @@ if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
   <label>Cím: <input name="shipping_address" value="<?=h(post('shipping_address'))?>"></label><br>
   <button type="submit">Megrendelés</button>
 </form>
-
-<script>
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('show');
-    }
-    function toggleCart() {
-      document.querySelector('.cart-dropdown').classList.toggle('show');
-    }
-
-    function toggleProfile() {
-      document.querySelector('.profile-dropdown').classList.toggle('show');
-    }
-  </script>
 </body>
 </html>
