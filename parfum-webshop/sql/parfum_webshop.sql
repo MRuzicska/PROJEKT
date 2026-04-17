@@ -141,20 +141,14 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `brand`, `description`, `price`, `stock`, `category_id`, `image_url`, `created_at`) VALUES
-(1, 'Rose Bloom EDP 50ml', 'Flora', 'Virágos-gyümölcsös, mindennapokra.', 12990, 20, 1, NULL, '2026-01-29 15:05:14'),
-(2, 'Night Cedar EDT 100ml', 'Nord', 'Fás, friss, elegáns.', 15990, 7, 2, NULL, '2026-01-29 15:05:14'),
-(3, 'Citrus Mist EDC 75ml', 'Aqua', 'Citrusos, könnyed.', 9990, 18, 3, NULL, '2026-01-29 15:05:14');
-(1, 'Rose Bloom EDP 50ml', 'Flora', 'Virágos-gyümölcsös, mindennapokra.', 12990, 20, 1, NULL, NOW()),
-(2, 'Night Cedar EDT 100ml', 'Nord', 'Fás, friss, elegáns.', 15990, 20, 2, NULL, NOW()),
-(3, 'Citrus Mist EDC 75ml', 'Aqua', 'Citrusos, könnyed.', 9990, 20, 3, NULL, NOW()),
-(5, 'Sauvage EDT 100ml', 'Dior', 'Friss, fás, férfias illat.', 35990, 18, 2, NULL, NOW()),
-(6, 'La Vie Est Belle EDP 50ml', 'Lancome', 'Édes, virágos, elegáns.', 34990, 12, 1, NULL, NOW()),
-(7, 'Acqua Di Gio EDT 100ml', 'Armani', 'Friss tengeri citrusos illat.', 33990, 20, 2, NULL, NOW()),
-(8, 'Light Blue EDT 100ml', 'Dolce & Gabbana', 'Friss, citrusos, nyári illat.', 29990, 14, 3, NULL, NOW()),
-(9, 'Eros EDT 100ml', 'Versace', 'Édes, mentás, erős férfi illat.', 31990, 16, 2, NULL, NOW()),
-(10, 'Good Girl EDP 80ml', 'Carolina Herrera', 'Édes, virágos, elegáns.', 36990, 10, 1, NULL, NOW()),
-(11, 'Bleu de Chanel EDT 100ml', 'Chanel', 'Fás-aromás, elegáns férfi illat.', 38990, 13, 2, NULL, NOW()),
-(12, 'Alien EDP 60ml', 'Mugler', 'Erős, virágos, különleges illat.', 35990, 11, 1, NULL, NOW()),
+(5, 'Sauvage EDT 100ml', 'Dior', 'Friss, fás, férfias illat.', 35990, 18, 2, 'https://images.unsplash.com/photo-1577318810033-fcfd177f998e?w=500&h=500&fit=crop', NOW()),
+(6, 'La Vie Est Belle EDP 50ml', 'Lancome', 'Édes, virágos, elegáns.', 34990, 12, 1, 'https://images.unsplash.com/photo-1547887537-6435766b42c1?w=500&h=500&fit=crop', NOW()),
+(7, 'Acqua Di Gio EDT 100ml', 'Armani', 'Friss tengeri citrusos illat.', 33990, 20, 2, 'https://images.unsplash.com/photo-1616394584738-1e70f1b9a1f2?w=500&h=500&fit=crop', NOW()),
+(8, 'Light Blue EDT 100ml', 'Dolce & Gabbana', 'Friss, citrusos, nyári illat.', 29990, 14, 3, 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&h=500&fit=crop', NOW()),
+(9, 'Eros EDT 100ml', 'Versace', 'Édes, mentás, erős férfi illat.', 31990, 16, 2, 'https://images.unsplash.com/photo-1506755855726-7d44e50b55e1?w=500&h=500&fit=crop', NOW()),
+(10, 'Good Girl EDP 80ml', 'Carolina Herrera', 'Édes, virágos, elegáns.', 36990, 10, 1, 'https://images.unsplash.com/photo-1596406604880-a0e5e1dd4590?w=500&h=500&fit=crop', NOW()),
+(11, 'Bleu de Chanel EDT 100ml', 'Chanel', 'Fás-aromás, elegáns férfi illat.', 38990, 13, 2, 'https://images.unsplash.com/photo-1523293172d7bef32c36e45c50527de8b69bb28ee?w=500&h=500&fit=crop', NOW()),
+(12, 'Alien EDP 60ml', 'Mugler', 'Erős, virágos, különleges illat.', 35990, 11, 1, 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&h=500&fit=crop', NOW()),
 (13, 'CK One EDT 100ml', 'Calvin Klein', 'Friss citrusos unisex illat.', 19990, 22, 3, NULL, NOW()),
 (14, 'Idole EDP 50ml', 'Lancome', 'Modern, tiszta virágos illat.', 32990, 17, 1, NULL, NOW()),
 (15, 'Invictus EDT 100ml', 'Paco Rabanne', 'Friss, sportos férfi illat.', 33990, 19, 2, NULL, NOW()),
