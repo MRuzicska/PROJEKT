@@ -78,8 +78,14 @@ foreach ($items as $it) $total += (int)$it['price'] * (int)$it['quantity'];
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Kosár</title>
-<link rel="stylesheet" href="css/cart.css"></head>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Kosár</title>
+  <link rel="stylesheet" href="css/cart.css?v=2">
+</head>
 <body>
 
 <header class="navbar">
@@ -279,9 +285,10 @@ foreach ($items as $it) $total += (int)$it['price'] * (int)$it['quantity'];
       </tr>
     <?php endforeach; ?>
   </table>
-  <p><strong>Összesen: <?=$total?> Ft</strong></p>
-  <p><a href="index.php"><button class="btnn"> ← Vissza a termékekhez </button> </a></p>
-  <p><a href="checkout.php"> <button class="btn"> Tovább a rendeléshez → </button> </a></p>
+  <div class="button-row">
+    <a href="index.php" class="btnn">← Vissza a termékekhez</a>
+    <a href="checkout.php" class="btn">Tovább a rendeléshez →</a>
+  </div>
 <?php endif; ?>
 </body>
 </html>
