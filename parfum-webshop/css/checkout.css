@@ -5,13 +5,7 @@ body{
   margin: 0;
   padding: 24px;
   min-height: 100vh;
-
-  /* center the form nicely */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
+  display: block;
 }
 
 /* Title */
@@ -22,6 +16,55 @@ h1{
   color: #1f6feb;
   letter-spacing: .2px;
 }
+
+/* Keep the form centered below the navbar */
+form[method="post"]{
+  margin: 24px auto 0 auto;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f2a38;
+  padding: 10px 20px;
+}
+
+.navbar .logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navbar .logo img {
+  height: 40px;
+}
+
+.navbar a{
+  color: #DDA853;
+  text-decoration: none;
+  font-size: 20px;
+}
+
+.nav-links a {
+  color: #fff;
+  margin: 0 10px;
+  text-decoration: none;
+}
+
+.nav-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-actions button {
+  background: #DDEB9D;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 
 /* Back link */
 body > p:first-of-type{
