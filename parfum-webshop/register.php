@@ -33,20 +33,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Regisztráció</title>
-<link rel="stylesheet" href="css/register.css"></head>
+
+<head>
+  <meta charset="utf-8">
+  <title>Regisztráció</title>
+  <link rel="stylesheet" href="css/auth.css">
+</head>
+
 <body>
 
-<h1>Regisztráció</h1>
-<?php if (isset($error)) echo '<p style="color:red;">'.h($error).'</p>'; ?>
-<form method="post">
-  <label>Név: <input name="name" value="<?=h(post('name'))?>"></label><br>
-  <label>Email: <input name="email" value="<?=h(post('email'))?>"></label><br>
-  <label>Jelszó: <input type="password" name="password"></label><br>
-  <button type="submit">Regisztráció</button>
-</form>
-<p><a href="login.php">Már van fiókom</a></p>
+  <header class="navbar">
+    <div class="logo">
+      <a href="index.php">Parfum p'Dm</a>
+    </div>
+
+    <nav class="nav-links">
+      <a href="products.php">Összes parfüm</a>
+      <a href="products.php?category_id=2">Csak férfi</a>
+      <a href="products.php?category_id=1">Csak női</a>
+      <a href="products.php?category_id=3">Csak unisex</a>
+    </nav>
+  </header>
+
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <h1>Regisztráció</h1>
+
+      <?php if (!empty($error)): ?>
+        <p class="auth-error"><?= h($error) ?></p>
+      <?php endif; ?>
+
+      <form method="post">
+        <label for="username">Név</label>
+        <input type="text" name="name" autocomplete="name" value="<?= h($_POST['username'] ?? '') ?>">
+
+        <label for="email">Email</label>
+        <input type="email" name="email". autocomplete="email" value="<?= h($_POST['email'] ?? '') ?>">
+
+        <label for="password">Jelszó</label>
+        <input type="password" id="password" autocomplete="password" name="password">
+
+        <button type="submit">Regisztráció</button>
+      </form>
+
+      <p class="auth-switch">
+        Már van fiókom <a href="login.php">Belépés</a>
+      </p>
+    </div>
+  </div>
 </body>
+
 </html>
-
-

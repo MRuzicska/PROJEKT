@@ -1,0 +1,217 @@
+* {
+    box-sizing: border-box;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, #F3F3E0 0%, #1a1a1a 100%);
+    min-height: 100vh;
+  }
+  
+  /* NAVBAR */
+  .navbar {
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+    background: #0f2a38;
+  }
+  
+  .navbar .logo a {
+    color: #DDA853;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  
+  .nav-links {
+    display: flex;
+    gap: 24px;
+  }
+  
+  .nav-links a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    transition: 0.25s ease;
+  }
+  
+  .nav-links a:hover {
+    transform: scale(1.08);
+  }
+  
+  /* WRAP */
+  .auth-wrap {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+  }
+  
+  /* CARD */
+  .auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: #183B4E;
+    border-radius: 18px;
+    padding: 34px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  .auth-card h1 {
+    margin: 0 0 24px 0;
+    text-align: center;
+    font-size: 34px;
+    color: #fff;
+  }
+  
+  /* ERROR */
+  .auth-error {
+    background: rgba(255, 82, 82, 0.14);
+    border: 1px solid rgba(255, 82, 82, 0.35);
+    color: #fff;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 18px;
+  }
+  
+  /* FORM */
+  form[method="post"] label {
+    display: block;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  form[method="post"] input {
+    width: 100%;
+    padding: 13px 14px;
+    margin-bottom: 18px;
+    border: 1px solid #4b6473;
+    border-radius: 10px;
+    background: #122b3a;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+  }
+  
+  form[method="post"] input:focus {
+    border-color: #DDA853;
+    box-shadow: 0 0 0 3px rgba(221, 168, 83, 0.15);
+  }
+  
+  form[method="post"] button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #DDEB9D;
+    color: #183B4E;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  form[method="post"] button[type="submit"]:hover {
+    background: #DDA853;
+    transform: translateY(-2px);
+  }
+  
+  /* SWITCH LINK */
+  .auth-switch {
+    margin: 20px 0 0 0;
+    text-align: center;
+    color: #ddd;
+  }
+  
+  .auth-switch a {
+    color: #DDA853;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  
+  .auth-switch a:hover {
+    text-decoration: underline;
+  }
+
+  .auth-card {
+    width: 100%;
+    max-width: 440px;
+    background: #183B4E;
+    border-radius: 18px;
+    padding: 34px;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  
+  .auth-card form {
+    width: 100%;
+  }
+  
+  .auth-card label {
+    display: block;
+    color: #fff;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .auth-card input {
+    width: 100%;
+    padding: 13px 14px;
+    margin-bottom: 18px;
+    border: 1px solid #4b6473;
+    border-radius: 10px;
+    background: #122b3a;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+  }
+  
+  .auth-card button[type="submit"] {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #DDEB9D;
+    color: #183B4E;
+    font-weight: 800;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.25s;
+  }
+  
+  .auth-switch {
+    margin: 20px 0 0 0;
+    text-align: center;
+    color: #ddd;
+  }
+  
+  .auth-switch a {
+    color: #DDA853;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  
+  @media (max-width: 700px) {
+    .navbar {
+      padding: 0 16px;
+    }
+  
+    .nav-links {
+      display: none;
+    }
+  
+    .auth-card {
+      padding: 26px 20px;
+    }
+  
+    .auth-card h1 {
+      font-size: 28px;
+    }
+  }

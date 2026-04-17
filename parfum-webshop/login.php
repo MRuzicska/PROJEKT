@@ -26,16 +26,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!doctype html>
 <html lang="hu">
 <head><meta charset="utf-8"><title>Bejelentkezés</title>
-<link rel="stylesheet" href="css/login.css"></head>
+<link rel="stylesheet" href="css/auth.css"></head>
 <body>
 
-<h1>Bejelentkezés</h1>
-<?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>
-<form method="post">
+<header class="navbar">
+  <div class="logo">
+    <a href="index.php">Parfum p'Dm</a>
+  </div>
+
+  <nav class="nav-links">
+    <a href="products.php">Összes parfüm</a>
+    <a href="products.php?category_id=2">Csak férfi</a>
+    <a href="products.php?category_id=1">Csak női</a>
+    <a href="products.php?category_id=3">Csak unisex</a>
+  </nav>
+</header>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <h1>Bejelentkezés</h1>
+
+    <?php if (!empty($error)): ?>
+      <p class="auth-error"><?= h($error) ?></p>
+    <?php endif; ?>
+
+    <form method="post">
   <label>Email: <input name="email" value="<?=h(post('email'))?>"></label><br>
   <label>Jelszó: <input type="password" name="password"></label><br>
   <button type="submit">Belépés</button>
 </form>
-<p><a href="register.php">Regisztráció</a></p>
+<p class="auth-switch">
+      Nincs fiókod? <a href="register.php">Regisztráció</a>
+    </p>
 </body>
 </html>
