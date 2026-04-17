@@ -4,198 +4,127 @@ require __DIR__ . '/includes/auth.php';
 require __DIR__ . '/includes/functions.php';
 
 require_login();
-$userId = (int)$_SESSION['user_id'];
+$userId = (int) $_SESSION['user_id'];
 
-$orders = $pdo->prepare("SELECT * FROM orders WHERE user_id=? ORDER BY id DESC");
-$orders->execute([$userId]);
-$rows = $orders->fetchAll();
+$stmt = $pdo->prepare("SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC");
+$stmt->execute([$userId]);
+$rows = $stmt->fetchAll();
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Rendeléseim</title>
-<link rel="stylesheet" href="css/orders.css"></head>
+
+<head>
+  <meta charset="utf-8">
+  <title>Rendeléseim</title>
+  <link rel="stylesheet" href="css/orders.css">
+  <link rel="stylesheet" href="css/footer.css">
+</head>
+
 <body>
 
-<header class="navbar">
+  <header class="navbar">
     <div class="logo">
       <a href="index.php">Parfum p'Dm</a>
     </div>
-    <nav class="nav-links desktop-menu">
+
+    <nav class="nav-links">
       <a href="products.php">Összes parfüm</a>
       <a href="products.php?category_id=2">Csak férfi</a>
       <a href="products.php?category_id=1">Csak női</a>
       <a href="products.php?category_id=3">Csak unisex</a>
     </nav>
 
-
     <div class="nav-actions">
-      <div class="cart-wrapper">
-        <button onclick="toggleCart()">🛒 Kosár</button>
-        <div class="dropdown cart-dropdown">
-          <?php require_login();
-          $userId = (int) $_SESSION['user_id'];
-
-          if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $action = post('action');
-
-            if ($action === 'add') {
-              $pid = (int) post('product_id');
-              $qty = max(1, (int) post('qty', '1'));
-
-              // készlet ellenőrzés
-              $st = $pdo->prepare("SELECT stock FROM products WHERE id=?");
-              $st->execute([$pid]);
-              $row = $st->fetch();
-              if (!$row) {
-                die("Nincs ilyen termék.");
-              }
-              $stock = (int) $row['stock'];
-              if ($qty > $stock) {
-                die("Nincs elég készlet.");
-              }
-
-              // upsert
-              $pdo->prepare(
-                "INSERT INTO cart_items (user_id, product_id, quantity)
-       VALUES (?, ?, ?)
-       ON DUPLICATE KEY UPDATE quantity = LEAST(quantity + VALUES(quantity), ?)"
-              )->execute([$userId, $pid, $qty, $stock]);
-
-              header('Location: cart.php');
-              exit;
-            }
-
-            if ($action === 'update') {
-              $id = (int) post('item_id');
-              $qty = max(1, (int) post('qty', '1'));
-
-              // készlet check a termékhez
-              $st = $pdo->prepare(
-                "SELECT ci.product_id, p.stock
-       FROM cart_items ci JOIN products p ON p.id=ci.product_id
-       WHERE ci.id=? AND ci.user_id=?"
-              );
-              $st->execute([$id, $userId]);
-              $row = $st->fetch();
-              if (!$row) {
-                die("Nincs ilyen kosár tétel.");
-              }
-              if ($qty > (int) $row['stock']) {
-                die("Nincs elég készlet.");
-              }
-
-              $pdo->prepare("UPDATE cart_items SET quantity=? WHERE id=? AND user_id=?")
-                ->execute([$qty, $id, $userId]);
-
-              header('Location: cart.php');
-              exit;
-            }
-
-            if ($action === 'delete') {
-              $id = (int) post('item_id');
-              $pdo->prepare("DELETE FROM cart_items WHERE id=? AND user_id=?")
-                ->execute([$id, $userId]);
-              header('Location: cart.php');
-              exit;
-            }
-          }
-
-          $stmt = $pdo->prepare(
-            "SELECT ci.id, ci.quantity, p.name, p.brand, p.price, p.stock
-   FROM cart_items ci
-   JOIN products p ON p.id = ci.product_id
-   WHERE ci.user_id = ?
-   ORDER BY ci.id DESC"
-          );
-          $stmt->execute([$userId]);
-          $items = $stmt->fetchAll();
-
-          $total = 0;
-          foreach ($items as $it)
-            $total += (int) $it['price'] * (int) $it['quantity'];
-          ?>
-
-
-
-          <?php if (!$items): ?>
-            <p>A kosár üres.</p>
-          <?php else: ?>
-            <table border="1" cellpadding="6">
-              <tr>
-                <th>Termék</th>
-                <th>Ár</th>
-                <th>Mennyiség</th>
-                <th>Részösszeg</th>
-                <th>Művelet</th>
-              </tr>
-              <?php foreach ($items as $it):
-                $sub = (int) $it['price'] * (int) $it['quantity'];
-                ?>
-                <tr>
-                  <td><?= h($it['brand']) ?> – <?= h($it['name']) ?></td>
-                  <td><?= (int) $it['price'] ?> Ft</td>
-                  <td>
-                    <form method="post" style="display:inline;">
-                      <input type="hidden" name="action" value="update">
-                      <input type="hidden" name="item_id" value="<?= $it['id'] ?>">
-                      <input type="number" name="qty" min="1" max="<?= $it['stock'] ?>" value="<?= $it['quantity'] ?>"
-                        style="width:70px;">
-                      <button type="submit">Mentés</button>
-                    </form>
-                  </td>
-                  <td><?= $sub ?> Ft</td>
-                  <td>
-                    <form method="post" style="display:inline;" onsubmit="return confirm('Törlöd?');">
-                      <input type="hidden" name="action" value="delete">
-                      <input type="hidden" name="item_id" value="<?= $it['id'] ?>">
-                      <button type="submit">Törlés</button>
-                    </form>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            </table>
-
-            <p><strong>Összesen: <?= $total ?> Ft</strong></p>
-            <p><a href="checkout.php">Tovább a rendeléshez →</a></p>
-          <?php endif; ?>
-          <a href="cart.php" class="btn-small">Kosár megnyitása</a>
-        </div>
-      </div>
-      <div class="profile-wrapper">
-        <button onclick="toggleProfile()">👤 Profil</button>
-        <div class="dropdown profile-dropdown">
-          <?php if (is_logged_in()): ?>
-            <p>Üdvözlünk, <?= h($_SESSION['username'] ?? 'Felhasználó') ?>!</p>
-            <?php if (is_admin()): ?>
-              <a href="admin.php" class="btn-small">Admin</a>
-            <?php endif; ?>
-            <a href="logout.php" class="btn-small">Kijelentkezés</a>
-          <?php else: ?>
-            <a href="login.php" class="btn-small">Bejelentkezés</a>
-            <a href="register.php" class="btn-small">Regisztráció</a>
-          <?php endif; ?>
-        </div>
-      </div>
+      <a href="logout.php">Kijelentkezés</a>
     </div>
   </header>
-  
-<h1>Rendeléseim</h1>
-<p><a href="index.php">← Termékek</a></p>
 
-<?php if (!$rows): ?>
-  <p>Még nincs rendelésed.</p>
-<?php else: ?>
-  <table border="1" cellpadding="6">
-    <tr><th>#</th><th>Összeg</th><th>Státusz</th><th>Dátum</th></tr>
-    <?php foreach ($rows as $o): ?>
-      <tr>
-        <td><?=$o['id']?></td>
-        <td><?=$o['total_price']?> Ft</td>
-        <td><?=h($o['status'])?></td>
-        <td><?=h($o['created_at'])?></td>
-      </tr>
-    <?php endforeach; ?>
-  </table>
-<?php endif; ?>
+  <main>
+
+    <div class="page-wrap">
+      <h1 class="page-title">Rendeléseim</h1>
+
+      <?php if (!$rows): ?>
+        <div class="card empty-box">
+          <h2>Még nincs rendelésed</h2>
+          <p>Nézz szét a kínálatban, és add le az első rendelésed.</p>
+
+          <div class="button-row" style="justify-content:center;">
+            <a href="products.php" class="btn-primary">Parfümök megtekintése</a>
+          </div>
+        </div>
+      <?php else: ?>
+        <div class="order-list">
+          <?php foreach ($rows as $o): ?>
+            <div class="order-item">
+              <div class="order-top">
+                <div>
+                  <div class="order-id">Rendelés #<?= (int) $o['id'] ?></div>
+                  <div class="order-meta">Dátum: <?= h($o['created_at']) ?></div>
+                </div>
+
+                <div class="order-status">
+                  <?= h($o['status']) ?>
+                </div>
+              </div>
+
+              <div class="summary-box">
+                <div class="summary-row">
+                  <span>Végösszeg</span>
+                  <span><?= (int) $o['total_price'] ?> Ft</span>
+                </div>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="button-row">
+          <a href="products.php" class="btn-secondary">← Vissza a termékekhez</a>
+        </div>
+      <?php endif; ?>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-container">
+
+      <div class="footer-column">
+        <h3>Parfum p'Dm</h3>
+        <p>
+          Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+        </p>
+      </div>
+
+      <div class="footer-column">
+        <h3>Kapcsolat</h3>
+        <p>Email: info@parfumpdm.hu</p>
+        <p>Telefon: +36 20 123 4567</p>
+        <p>Cím: 1182 Budapest, Illat utca 12.</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>Információk</h3>
+        <a href="products.php">Összes parfüm</a>
+        <a href="cart.php">Kosár</a>
+        <a href="orders.php">Rendeléseim</a>
+        <a href="login.php">Bejelentkezés</a>
+      </div>
+
+      <div class="footer-column">
+        <h3>Vásárlás</h3>
+        <p>Biztonságos rendelés</p>
+        <p>Gyors kiszállítás</p>
+        <p>Minőségi termékek</p>
+        <p>Ügyfélszolgálat minden hétköznap</p>
+      </div>
+
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
+    </div>
+  </footer>
+
 </body>
+
 </html>

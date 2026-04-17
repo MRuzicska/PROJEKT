@@ -20,9 +20,44 @@ $stmt = $pdo->prepare("
 $stmt->execute([$id]);
 $product = $stmt->fetch();
 
+$relatedProducts = $pdo->prepare("
+SELECT p.*, c.name AS category_name
+FROM products p
+JOIN categories c ON c.id = p.category_id
+WHERE p.id != ?
+ORDER BY p.id DESC
+LIMIT 12
+");
+
+$relatedProducts->execute([$id]);
+
+$related = $relatedProducts->fetchAll();
+
 if (!$product) {
   http_response_code(404);
   exit('A termék nem található.');
+}
+
+$variantsStmt = $pdo->prepare("
+  SELECT id, product_id, size_ml, price, stock
+  FROM product_variants
+  WHERE product_id = ?
+  ORDER BY size_ml ASC
+");
+$variantsStmt->execute([$id]);
+$variants = $variantsStmt->fetchAll();
+
+$selectedVariant = $variants[0] ?? null;
+
+if (isset($_GET['variant_id'])) {
+  $requestedVariantId = (int) $_GET['variant_id'];
+
+  foreach ($variants as $variant) {
+    if ((int) $variant['id'] === $requestedVariantId) {
+      $selectedVariant = $variant;
+      break;
+    }
+  }
 }
 ?>
 <!DOCTYPE html>
@@ -32,6 +67,7 @@ if (!$product) {
   <meta charset="utf-8">
   <title><?= h($product['brand'] . ' – ' . $product['name']) ?></title>
   <link rel="stylesheet" href="css/product.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 
 <body>
@@ -218,85 +254,296 @@ if (!$product) {
         </div>
       </div>
       <div class="profile-wrapper">
-          <button onclick="toggleProfile()">👤 Profil</button>
-          <div class="dropdown profile-dropdown">
-            <?php if (is_logged_in()): ?>
-              <p>Üdvözlünk,
-                <?= h($_SESSION['username'] ?? 'Felhasználó') ?>!
-              </p>
-              <?php if (is_admin()): ?>
-                <a href="admin.php" class="btn-small">Admin</a>
-              <?php endif; ?>
-              <a href="logout.php" class="btn-small">Kijelentkezés</a>
-            <?php else: ?>
-              <a href="login.php" class="btn-small">Bejelentkezés</a>
-              <a href="register.php" class="btn-small">Regisztráció</a>
+        <button onclick="toggleProfile()">👤 Profil</button>
+        <div class="dropdown profile-dropdown">
+          <?php if (is_logged_in()): ?>
+            <p>Üdvözlünk,
+              <?= h($_SESSION['username'] ?? 'Felhasználó') ?>!
+            </p>
+            <?php if (is_admin()): ?>
+              <a href="admin/admin.php" class="btn-small">Admin</a>
             <?php endif; ?>
-          </div>
+            <a href="logout.php" class="btn-small">Kijelentkezés</a>
+          <?php else: ?>
+            <a href="login.php" class="btn-small">Bejelentkezés</a>
+            <a href="register.php" class="btn-small">Regisztráció</a>
+          <?php endif; ?>
         </div>
+      </div>
     </div>
   </header>
   <main class="page-container">
-  <!-- ===== PRODUCT LAYOUT ===== -->
-  <div class="product-container">
+    <!-- ===== PRODUCT LAYOUT ===== -->
+    <div class="product-container">
 
-    <!-- BAL OLDAL: KÉP -->
-    <div class="product-image">
-      <?php if (!empty($product['image_url'])): ?>
-        <img src="<?= h($product['image_url']) ?>" alt="<?= h($product['name']) ?>">
-      <?php endif; ?>
-    </div>
-
-    <!-- JOBB OLDAL: INFÓ -->
-    <div class="product-info">
-
-      <h1><?= h($product['brand']) ?> – <?= h($product['name']) ?></h1>
-
-      <p class="category">
-        Kategória: <?= h($product['category_name'] ?? '-') ?>
-      </p>
-
-      <!-- ===== IDE JÖN A PARFÜM LEÍRÁS (ÜRES HELY) ===== -->
-      <div class="description-box">
-        <!-- IDE ÍRD MAJD A LEÍRÁST -->
+      <!-- BAL OLDAL: KÉP -->
+      <div class="product-image">
+        <?php if (!empty($product['image_url'])): ?>
+          <img src="<?= h($product['image_url']) ?>" alt="<?= h($product['name']) ?>">
+        <?php endif; ?>
       </div>
 
-      <p class="price">
-        Ár: <?= (int) $product['price'] ?> Ft
-      </p>
+      <!-- JOBB OLDAL: INFÓ -->
+      <div class="product-info">
 
-      <p class="stock">
-        Készlet: <?= (int) $product['stock'] ?>
-      </p>
+        <h1><?= h($product['brand']) ?> – <?= h($product['name']) ?></h1>
 
-      <!-- ===== KISZERELÉS (HA AKARSZ MÉG FEJLESZTENI) ===== -->
-      <form method="post" action="cart_add.php">
-        <label>Darab:</label>
-        <input type="number" name="qty" min="1" value="1">
+        <p class="category">
+          Kategória: <?= h($product['category_name'] ?? '-') ?>
+        </p>
 
-        <button type="submit">Kosárba</button>
-      </form>
+        <div class="variant-box">
+          <?php if (!empty($variants)): ?>
+            <label for="variant-select">Kiszerelés</label>
 
-      <a href="index.php" class="back-link">← Vissza</a>
+            <select id="variant-select" onchange="changeVariant(this.value)">
+              <?php foreach ($variants as $variant): ?>
+                <option value="<?= (int) $variant['id'] ?>" <?= $selectedVariant && (int) $selectedVariant['id'] === (int) $variant['id'] ? 'selected' : '' ?>>
+                  <?= (int) $variant['size_ml'] ?> ml
+                </option>
+              <?php endforeach; ?>
+            </select>
+
+            <div class="variant-info">
+              <p>
+                <strong>Kiszerelés:</strong>
+                <span id="variant-size">
+                  <?= $selectedVariant ? (int) $selectedVariant['size_ml'] : '-' ?>
+                </span> ml
+              </p>
+
+              <p>
+                <strong>Ár:</strong>
+                <span id="variant-price">
+                  <?= $selectedVariant ? (int) $selectedVariant['price'] : (int) $product['price'] ?>
+                </span> Ft
+              </p>
+
+              <p>
+                <strong>Készlet:</strong>
+                <span id="variant-stock">
+                  <?= $selectedVariant ? (int) $selectedVariant['stock'] : (int) $product['stock'] ?>
+                </span>
+              </p>
+            </div>
+          <?php else: ?>
+            <p>Nincs elérhető kiszerelés ehhez a termékhez.</p>
+          <?php endif; ?>
+        </div>
+
+        <form method="post" action="cart.php" class="product-buy-form">
+          <input type="hidden" name="action" value="add">
+          <input type="hidden" name="product_id" value="<?= (int) $product['id'] ?>">
+          <input type="hidden" name="variant_id" id="selected-variant-id"
+            value="<?= $selectedVariant ? (int) $selectedVariant['id'] : 0 ?>">
+
+          <label for="qty">Darab:</label>
+          <input type="number" id="qty" name="qty" value="1" min="1"
+            max="<?= $selectedVariant ? (int) $selectedVariant['stock'] : (int) $product['stock'] ?>">
+
+          <button type="submit">Kosárba</button>
+        </form>
+
+        <a href="index.php" class="back-link">← Vissza</a>
+
+      </div>
 
     </div>
 
-  </div>
+    <!-- KAPCSOLÓDÓ TERMÉKEK -->
+    <h2>Kapcsolódó termékek</h2>
 
-  <script>
-    function toggleMenu() {
-      document.getElementById('mobileMenu').classList.toggle('show');
-    }
-    function toggleCart() {
-      document.querySelector('.cart-dropdown').classList.toggle('show');
-    }
+    <div class="product-grid" id="related-grid">
+      <?php foreach ($related as $p): ?>
+        <div class="product-card" onclick="window.location.href='product.php?id=<?= (int) $p['id'] ?>'">
+          <div class="product-image">
+            <?php if (!empty($p['image_url'])): ?>
+              <img src="<?= h($p['image_url']) ?>" alt="<?= h($p['name']) ?>">
+            <?php endif; ?>
+          </div>
 
-    function toggleProfile() {
-      document.querySelector('.profile-dropdown').classList.toggle('show');
-    }
-  </script>
+          <div class="product-name"><?= h($p['name']) ?></div>
+          <div class="product-brand"><?= h($p['brand']) ?></div>
+          <div class="product-category">(<?= h($p['category_name']) ?>)</div>
+          <div class="product-price">Ár: <?= (int) $p['price'] ?> Ft</div>
+          <div class="product-stock">Készlet: <?= (int) $p['stock'] ?></div>
 
-</main>
+          <?php if ((int) $p['stock'] > 0): ?>
+            <form class="product-actions-row" method="post" action="cart.php" onclick="event.stopPropagation();">
+              <input type="hidden" name="action" value="add">
+              <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
+
+              <input type="number" name="qty" value="1" min="1" max="<?= (int) $p['stock'] ?>" class="qty-input"
+                onclick="event.stopPropagation();">
+
+              <button type="submit" class="add-to-cart-btn" onclick="event.stopPropagation();">
+                Kosárba
+              </button>
+            </form>
+          <?php else: ?>
+            <div class="sold-out">Elfogyott</div>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+
+    <div class="slider-nav">
+      <button onclick="prevRelated()">← Előző</button>
+      <button onclick="nextRelated()">Következő →</button>
+      <a href="products.php" class="all-products">Összes parfüm</a>
+    </div>
+
+    <script>
+      function toggleMenu() {
+        document.getElementById('mobileMenu').classList.toggle('show');
+      }
+      function toggleCart() {
+        document.querySelector('.cart-dropdown').classList.toggle('show');
+      }
+
+      function toggleProfile() {
+        document.querySelector('.profile-dropdown').classList.toggle('show');
+      }
+
+      /* KAPCSOLÓDÓ TERMÉKEK LAPOZÁS */
+
+      const relatedPerPage = 4;
+
+      let relatedPage = 0;
+
+      const relatedGrid =
+        document.getElementById('related-grid');
+
+      const relatedCards =
+        Array.from(relatedGrid.children);
+
+      function showRelatedPage(page) {
+
+        relatedPage = page;
+
+        const start =
+          page * relatedPerPage;
+
+        const end =
+          start + relatedPerPage;
+
+        relatedCards.forEach((card, i) => {
+
+          if (i >= start && i < end) {
+            card.style.display = "flex";
+          } else {
+            card.style.display = "none";
+          }
+
+        });
+
+      }
+
+      function nextRelated() {
+
+        const maxPage =
+          Math.ceil(
+            relatedCards.length /
+            relatedPerPage
+          ) - 1;
+
+        if (relatedPage < maxPage) {
+          showRelatedPage(
+            relatedPage + 1
+          );
+        } else {
+          showRelatedPage(0);
+        }
+
+      }
+
+      function prevRelated() {
+
+        const maxPage =
+          Math.ceil(
+            relatedCards.length /
+            relatedPerPage
+          ) - 1;
+
+        if (relatedPage > 0) {
+          showRelatedPage(
+            relatedPage - 1
+          );
+        } else {
+          showRelatedPage(maxPage);
+        }
+
+      }
+
+      showRelatedPage(0);
+
+      const variantData = <?= json_encode($variants, JSON_UNESCAPED_UNICODE) ?>;
+
+      function changeVariant(variantId) {
+        const selected = variantData.find(v => Number(v.id) === Number(variantId));
+        if (!selected) return;
+
+        const variantSize = document.getElementById('variant-size');
+        const variantPrice = document.getElementById('variant-price');
+        const variantStock = document.getElementById('variant-stock');
+        const hiddenVariantInput = document.getElementById('selected-variant-id');
+        const qtyInput = document.getElementById('qty');
+
+        if (variantSize) variantSize.textContent = selected.size_ml;
+        if (variantPrice) variantPrice.textContent = selected.price;
+        if (variantStock) variantStock.textContent = selected.stock;
+        if (hiddenVariantInput) hiddenVariantInput.value = selected.id;
+
+        if (qtyInput) {
+          qtyInput.max = selected.stock;
+          if (Number(qtyInput.value) > Number(selected.stock)) {
+            qtyInput.value = selected.stock > 0 ? selected.stock : 1;
+          }
+        }
+      }
+    </script>
+
+  </main>
+
+  <footer class="site-footer">
+      <div class="footer-container">
+
+        <div class="footer-column">
+          <h3>Parfum p'Dm</h3>
+          <p>
+            Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+          </p>
+        </div>
+
+        <div class="footer-column">
+          <h3>Kapcsolat</h3>
+          <p>Email: info@parfumpdm.hu</p>
+          <p>Telefon: +36 20 123 4567</p>
+          <p>Cím: 1182 Budapest, Illat utca 12.</p>
+        </div>
+
+        <div class="footer-column">
+          <h3>Információk</h3>
+          <a href="products.php">Összes parfüm</a>
+          <a href="cart.php">Kosár</a>
+          <a href="orders.php">Rendeléseim</a>
+          <a href="login.php">Bejelentkezés</a>
+        </div>
+
+        <div class="footer-column">
+          <h3>Vásárlás</h3>
+          <p>Biztonságos rendelés</p>
+          <p>Gyors kiszállítás</p>
+          <p>Minőségi termékek</p>
+          <p>Ügyfélszolgálat minden hétköznap</p>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
+      </div>
+    </footer>
 
 </body>
 

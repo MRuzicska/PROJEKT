@@ -27,6 +27,7 @@ $products = $pdo->query("
   <meta charset="utf-8">
   <title>Parfum p'Dm</title>
   <link rel="stylesheet" href="css/index.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 
 <body>
@@ -220,7 +221,7 @@ $products = $pdo->query("
               <?= h($_SESSION['username'] ?? 'Felhasználó') ?>!
             </p>
             <?php if (is_admin()): ?>
-              <a href="admin.php" class="btn-small">Admin</a>
+              <a href="admin/admin.php" class="btn-small">Admin</a>
             <?php endif; ?>
             <a href="logout.php" class="btn-small">Kijelentkezés</a>
           <?php else: ?>
@@ -254,7 +255,7 @@ $products = $pdo->query("
   <!-- ===== TERMÉKKÁRTYÁK ===== -->
   <div class="product-grid" id="product-grid">
     <?php foreach ($products as $p): ?>
-      <div class="product-card">
+      <div class="product-card" onclick="window.location.href='product.php?id=<?= (int) $p['id'] ?>'">
         <div class="product-image">
           <?php if (!empty($p['image_url'])): ?>
             <img src="<?= h($p['image_url']) ?>" alt="<?= h($p['name']) ?>">
@@ -265,11 +266,8 @@ $products = $pdo->query("
         <div class="product-category">(<?= h($p['category_name']) ?>)</div>
         <div class="product-price">Ár: <?= (int) $p['price'] ?> Ft</div>
         <div class="product-stock">Készlet: <?= (int) $p['stock'] ?></div>
-        <div class="product-links">
-          <a href="product.php?id=<?= (int) $p['id'] ?>">Részletek</a>
-        </div>
         <?php if ((int) $p['stock'] > 0): ?>
-          <form class="product-actions-row" method="post" action="cart.php">
+          <form class="product-actions-row" method="post" action="cart.php" onclick="event.stopPropagation();">
             <input type="hidden" name="action" value="add">
             <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
 
@@ -290,6 +288,47 @@ $products = $pdo->query("
     <button onclick="nextProducts()">Következő →</button>
     <a href="products.php" class="all-products">Összes parfüm</a>
   </div>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+  <div class="footer-container">
+
+    <div class="footer-column">
+      <h3>Parfum p'Dm</h3>
+      <p>
+        Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+      </p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Kapcsolat</h3>
+      <p>Email: info@parfumpdm.hu</p>
+      <p>Telefon: +36 20 123 4567</p>
+      <p>Cím: 1182 Budapest, Illat utca 12.</p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Információk</h3>
+      <a href="products.php">Összes parfüm</a>
+      <a href="cart.php">Kosár</a>
+      <a href="orders.php">Rendeléseim</a>
+      <a href="login.php">Bejelentkezés</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Vásárlás</h3>
+      <p>Biztonságos rendelés</p>
+      <p>Gyors kiszállítás</p>
+      <p>Minőségi termékek</p>
+      <p>Ügyfélszolgálat minden hétköznap</p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
+  </div>
+</footer>
 
   <script>
     /* ===== SLIDER JS ===== */

@@ -8,49 +8,97 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   if ($action === 'add') {
     $pid = (int) post('product_id');
+    $variantId = (int) post('variant_id');
     $qty = max(1, (int) post('qty', '1'));
 
-    $st = $pdo->prepare("SELECT stock FROM products WHERE id=?");
-    $st->execute([$pid]);
-    $row = $st->fetch();
+    // Ha nincs kiválasztott variant, automatikusan az első elérhetőt választjuk
+    if ($variantId <= 0) {
+        $defaultVariantStmt = $pdo->prepare("
+            SELECT id, product_id, price, stock
+            FROM product_variants
+            WHERE product_id = ?
+            ORDER BY size_ml ASC
+            LIMIT 1
+        ");
+        $defaultVariantStmt->execute([$pid]);
+        $defaultVariant = $defaultVariantStmt->fetch();
 
-    if (!$row) {
-      die("Nincs ilyen termék.");
+        if (!$defaultVariant) {
+            die("Ehhez a termékhez nincs elérhető kiszerelés.");
+        }
+
+        $variantId = (int) $defaultVariant['id'];
+        $stock = (int) $defaultVariant['stock'];
+    } else {
+        $variantStmt = $pdo->prepare("
+            SELECT id, product_id, price, stock
+            FROM product_variants
+            WHERE id = ? AND product_id = ?
+        ");
+        $variantStmt->execute([$variantId, $pid]);
+        $variant = $variantStmt->fetch();
+
+        if (!$variant) {
+            die("Nincs ilyen kiszerelés.");
+        }
+
+        $stock = (int) $variant['stock'];
     }
 
-    $stock = (int) $row['stock'];
-
     if ($qty > $stock) {
-      die("Nincs elég készlet.");
+        die("Nincs elég készlet.");
     }
 
     if (is_logged_in()) {
-      $userId = (int) $_SESSION['user_id'];
+        $userId = (int) $_SESSION['user_id'];
 
-      $pdo->prepare(
-        "INSERT INTO cart_items (user_id, product_id, quantity)
-         VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE quantity = LEAST(quantity + VALUES(quantity), ?)"
-      )->execute([$userId, $pid, $qty, $stock]);
+        $checkStmt = $pdo->prepare("
+            SELECT id, quantity
+            FROM cart_items
+            WHERE user_id = ? AND product_id = ? AND variant_id = ?
+        ");
+        $checkStmt->execute([$userId, $pid, $variantId]);
+        $existing = $checkStmt->fetch();
+
+        if ($existing) {
+            $newQty = min((int) $existing['quantity'] + $qty, $stock);
+
+            $pdo->prepare("
+                UPDATE cart_items
+                SET quantity = ?
+                WHERE id = ?
+            ")->execute([$newQty, $existing['id']]);
+        } else {
+            $pdo->prepare("
+                INSERT INTO cart_items (user_id, product_id, variant_id, quantity)
+                VALUES (?, ?, ?, ?)
+            ")->execute([$userId, $pid, $variantId, $qty]);
+        }
     } else {
-      if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-      }
+        if (!isset($_SESSION['cart'])) {
+            $_SESSION['cart'] = [];
+        }
 
-      if (isset($_SESSION['cart'][$pid])) {
-        $_SESSION['cart'][$pid] += $qty;
-      } else {
-        $_SESSION['cart'][$pid] = $qty;
-      }
+        $sessionKey = $pid . '_' . $variantId;
 
-      if ($_SESSION['cart'][$pid] > $stock) {
-        $_SESSION['cart'][$pid] = $stock;
-      }
+        if (isset($_SESSION['cart'][$sessionKey])) {
+            $_SESSION['cart'][$sessionKey]['quantity'] += $qty;
+        } else {
+            $_SESSION['cart'][$sessionKey] = [
+                'product_id' => $pid,
+                'variant_id' => $variantId,
+                'quantity' => $qty
+            ];
+        }
+
+        if ($_SESSION['cart'][$sessionKey]['quantity'] > $stock) {
+            $_SESSION['cart'][$sessionKey]['quantity'] = $stock;
+        }
     }
 
     header('Location: cart.php');
     exit;
-  }
+}
 
   if ($action === 'update') {
     $id = (int) post('item_id');
@@ -198,7 +246,8 @@ foreach ($items as $it) {
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <title>Kosár</title>
-  <link rel="stylesheet" href="css/cart.css?v=2">
+  <link rel="stylesheet" href="css/cart.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 <body>
 
@@ -221,7 +270,7 @@ foreach ($items as $it) {
           <?php if (is_logged_in()): ?>
             <p>Üdvözlünk, <?= h($_SESSION['username'] ?? 'Felhasználó') ?>!</p>
             <?php if (is_admin()): ?>
-              <a href="admin.php" class="btn-small">Admin</a>
+              <a href="admin/admin.php" class="btn-small">Admin</a>
             <?php endif; ?>
             <a href="logout.php" class="btn-small">Kijelentkezés</a>
           <?php else: ?>
@@ -232,7 +281,7 @@ foreach ($items as $it) {
       </div>
     </div>
   </header>
-  
+  <main>
 <h1>Kosár</h1>
 
 
@@ -272,5 +321,62 @@ foreach ($items as $it) {
     <a href="checkout.php" class="btn">Tovább a rendeléshez →</a>
   </div>
 <?php endif; ?>
+</main>
+<footer class="site-footer">
+  <div class="footer-container">
+
+    <div class="footer-column">
+      <h3>Parfum p'Dm</h3>
+      <p>
+        Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+      </p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Kapcsolat</h3>
+      <p>Email: info@parfumpdm.hu</p>
+      <p>Telefon: +36 20 123 4567</p>
+      <p>Cím: 1182 Budapest, Illat utca 12.</p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Információk</h3>
+      <a href="products.php">Összes parfüm</a>
+      <a href="cart.php">Kosár</a>
+      <a href="orders.php">Rendeléseim</a>
+      <a href="login.php">Bejelentkezés</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Vásárlás</h3>
+      <p>Biztonságos rendelés</p>
+      <p>Gyors kiszállítás</p>
+      <p>Minőségi termékek</p>
+      <p>Ügyfélszolgálat minden hétköznap</p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
+  </div>
+
+</footer>
+
+<script>
+  function toggleProfile() {
+    document.querySelector('.profile-dropdown').classList.toggle('show');
+  }
+
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.profile-wrapper')) {
+      const dropdown = document.querySelector('.profile-dropdown');
+      if (dropdown) {
+        dropdown.classList.remove('show');
+      }
+    }
+  });
+</script>
+
 </body>
 </html>

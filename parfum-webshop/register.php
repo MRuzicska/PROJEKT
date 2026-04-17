@@ -38,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <meta charset="utf-8">
   <title>Regisztráció</title>
   <link rel="stylesheet" href="css/auth.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 
 <body>
@@ -81,6 +82,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </p>
     </div>
   </div>
+
+  <footer class="site-footer">
+  <div class="footer-container">
+
+    <div class="footer-column">
+      <h3>Parfum p'Dm</h3>
+      <p>
+        Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+      </p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Kapcsolat</h3>
+      <p>Email: info@parfumpdm.hu</p>
+      <p>Telefon: +36 20 123 4567</p>
+      <p>Cím: 1182 Budapest, Illat utca 12.</p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Információk</h3>
+      <a href="products.php">Összes parfüm</a>
+      <a href="cart.php">Kosár</a>
+      <a href="orders.php">Rendeléseim</a>
+      <a href="login.php">Bejelentkezés</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Vásárlás</h3>
+      <p>Biztonságos rendelés</p>
+      <p>Gyors kiszállítás</p>
+      <p>Minőségi termékek</p>
+      <p>Ügyfélszolgálat minden hétköznap</p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
+  </div>
+</footer>
 </body>
 
 </html>

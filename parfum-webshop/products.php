@@ -54,6 +54,7 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
   <meta charset="utf-8">
   <title>Parfüm webshop</title>
   <link rel="stylesheet" href="css/products.css">
+  <link rel="stylesheet" href="css/footer.css">
 </head>
 
 <body>
@@ -246,7 +247,7 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
               <?= h($_SESSION['username'] ?? 'Felhasználó') ?>!
             </p>
             <?php if (is_admin()): ?>
-              <a href="admin.php" class="btn-small">Admin</a>
+              <a href="admin/admin.php" class="btn-small">Admin</a>
             <?php endif; ?>
             <a href="logout.php" class="btn-small">Kijelentkezés</a>
           <?php else: ?>
@@ -286,7 +287,7 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
 
   <div class="product-grid">
     <?php foreach ($products as $p): ?>
-      <div class="product-card">
+      <div class="product-card" onclick="window.location.href='product.php?id=<?= (int) $p['id'] ?>'">
         <div class="product-image">
           <?php if (!empty($p['image_url'])): ?>
             <img src="<?= h($p['image_url']) ?>" alt="<?= h($p['name']) ?>">
@@ -297,12 +298,9 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
         <div class="product-category">(<?= h($p['category_name']) ?>)</div>
         <div class="product-price">Ár: <?= (int) $p['price'] ?> Ft</div>
         <div class="product-stock">Készlet: <?= (int) $p['stock'] ?></div>
-        <div class="product-links">
-          <a href="product.php?id=<?= (int) $p['id'] ?>">Részletek</a>
-        </div>
         <?php if ((int) $p['stock'] > 0): ?>
 
-          <form class="product-actions-row" method="post" action="cart.php">
+          <form class="product-actions-row" method="post" action="cart.php"  onclick="event.stopPropagation();">
 
             <input type="hidden" name="action" value="add">
 
@@ -326,6 +324,46 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products ORDER BY brand")->fet
       </div>
     <?php endforeach; ?>
   </div>
+
+  <footer class="site-footer">
+  <div class="footer-container">
+
+    <div class="footer-column">
+      <h3>Parfum p'Dm</h3>
+      <p>
+        Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+      </p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Kapcsolat</h3>
+      <p>Email: info@parfumpdm.hu</p>
+      <p>Telefon: +36 20 123 4567</p>
+      <p>Cím: 1182 Budapest, Illat utca 12.</p>
+    </div>
+
+    <div class="footer-column">
+      <h3>Információk</h3>
+      <a href="products.php">Összes parfüm</a>
+      <a href="cart.php">Kosár</a>
+      <a href="orders.php">Rendeléseim</a>
+      <a href="login.php">Bejelentkezés</a>
+    </div>
+
+    <div class="footer-column">
+      <h3>Vásárlás</h3>
+      <p>Biztonságos rendelés</p>
+      <p>Gyors kiszállítás</p>
+      <p>Minőségi termékek</p>
+      <p>Ügyfélszolgálat minden hétköznap</p>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
+  </div>
+</footer>
 
   <script>
     /* ===== NAVBAR DROPDOWN JS ===== */

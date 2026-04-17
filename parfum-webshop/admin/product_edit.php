@@ -163,87 +163,127 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Admin - <?= $id>0 ? 'Szerkesztés' : 'Új termék' ?></title></head>
+<head>
+  <meta charset="utf-8">
+  <title>Admin - <?= $id > 0 ? 'Szerkesztés' : 'Új termék' ?></title>
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
 <body>
-<h1>Admin – <?= $id>0 ? 'Termék szerkesztése' : 'Új termék' ?></h1>
-<p><a href="products.php">← Vissza a termékekhez</a></p>
 
-<?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>
+<header class="navbar">
+  <div class="logo">
+    <a href="../index.php">Parfum p'Dm Admin</a>
+  </div>
 
-<form method="post">
-  <label>Márka:<br>
-    <input name="brand" value="<?=h((string)$product['brand'])?>" style="width:320px;">
-  </label><br><br>
+  <nav class="nav-links">
+    <a href="index.php">Admin menü</a>
+    <a href="products.php">Termékek</a>
+    <a href="orders.php">Rendelések</a>
+  </nav>
 
-  <label>Név:<br>
-    <input name="name" value="<?=h((string)$product['name'])?>" style="width:320px;">
-  </label><br><br>
+  <div class="nav-actions">
+    <a href="../index.php">Webshop</a>
+    <a href="../logout.php">Kilépés</a>
+  </div>
+</header>
 
-  <label>Kategória:<br>
-    <select name="category_id">
-      <?php foreach ($cats as $c): ?>
-        <option value="<?=$c['id']?>" <?= (int)$product['category_id']===(int)$c['id'] ? 'selected' : '' ?>>
-          <?=h($c['name'])?>
-        </option>
-      <?php endforeach; ?>
-    </select>
-  </label><br><br>
+<main class="admin-page">
+  <h1 class="admin-title"><?= $id > 0 ? 'Termék szerkesztése' : 'Új termék' ?></h1>
 
-  <label>Ár (Ft) – alap (opcionális, ha a variánsok eltérnek):<br>
-    <input type="number" name="price" min="1" value="<?= (int)$product['price'] ?>">
-  </label><br><br>
+  <?php if ($error): ?>
+    <div class="alert-error"><?= h($error) ?></div>
+  <?php endif; ?>
 
-  <label>Készlet – alap (opcionális):<br>
-    <input type="number" name="stock" min="0" value="<?= (int)$product['stock'] ?>">
-  </label><br><br>
+  <section class="admin-card">
+    <h2>Termék adatai</h2>
 
-  <label>Kép URL (opcionális):<br>
-    <input name="image_url" value="<?=h((string)$product['image_url'])?>" style="width:420px;">
-  </label><br><br>
+    <form method="post" class="admin-form">
+      <div class="form-group">
+        <label for="brand">Márka</label>
+        <input id="brand" name="brand" value="<?= h((string)$product['brand']) ?>">
+      </div>
 
-  <label>Leírás:<br>
-    <textarea name="description" rows="5" cols="60"><?=h((string)$product['description'])?></textarea>
-  </label><br><br>
+      <div class="form-group">
+        <label for="name">Név</label>
+        <input id="name" name="name" value="<?= h((string)$product['name']) ?>">
+      </div>
 
-  <hr>
+      <div class="form-group">
+        <label for="category_id">Kategória</label>
+        <select id="category_id" name="category_id">
+          <?php foreach ($cats as $c): ?>
+            <option value="<?= $c['id'] ?>" <?= (int)$product['category_id'] === (int)$c['id'] ? 'selected' : '' ?>>
+              <?= h($c['name']) ?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
 
-  <h2>Kiszerelések (pipáld be, amit szeretnél)</h2>
-  <p style="max-width:720px;">
-    Itt tudod beállítani, hogy milyen kiszerelésben legyen elérhető a parfüm (30/50/75/100/200 ml),
-    és mindegyikhez külön árat és készletet adhatsz meg.
-  </p>
+      <div class="form-group">
+        <label for="price">Ár (alap)</label>
+        <input type="number" id="price" name="price" min="1" value="<?= (int)$product['price'] ?>">
+      </div>
 
-  <table border="1" cellpadding="6">
-    <tr>
-      <th>Elérhető?</th>
-      <th>Méret</th>
-      <th>Ár (Ft)</th>
-      <th>Készlet</th>
-    </tr>
-    <?php foreach ($allowedSizes as $sz): ?>
-      <?php
-        $checked = isset($currentVariants[$sz]);
-        $pval = $checked ? (int)$currentVariants[$sz]['price'] : 0;
-        $sval = $checked ? (int)$currentVariants[$sz]['stock'] : 0;
-      ?>
-      <tr>
-        <td style="text-align:center;">
-          <input type="checkbox" name="sizes[<?= $sz ?>]" value="1" <?= $checked ? 'checked' : '' ?>>
-        </td>
-        <td><strong><?= $sz ?> ml</strong></td>
-        <td>
-          <input type="number" name="variant_price[<?= $sz ?>]" min="0" value="<?= $pval ?>" style="width:140px;">
-        </td>
-        <td>
-          <input type="number" name="variant_stock[<?= $sz ?>]" min="0" value="<?= $sval ?>" style="width:100px;">
-        </td>
-      </tr>
-    <?php endforeach; ?>
-  </table>
+      <div class="form-group">
+        <label for="stock">Készlet (alap)</label>
+        <input type="number" id="stock" name="stock" min="0" value="<?= (int)$product['stock'] ?>">
+      </div>
 
-  <br>
-  <button type="submit">Mentés</button>
-</form>
+      <div class="form-group">
+        <label for="image_url">Kép URL</label>
+        <input id="image_url" name="image_url" value="<?= h((string)$product['image_url']) ?>">
+      </div>
+
+      <div class="form-group full">
+        <label for="description">Leírás</label>
+        <textarea id="description" name="description"><?= h((string)$product['description']) ?></textarea>
+      </div>
+
+      <div class="form-group full">
+        <h2 style="margin:10px 0 0 0;">Kiszerelések</h2>
+        <p style="color:#e8e8e8;">
+          Pipáld be, melyik kiszerelés legyen elérhető, majd add meg az árát és a készletét.
+        </p>
+
+        <table class="variants-table">
+          <tr>
+            <th>Elérhető?</th>
+            <th>Méret</th>
+            <th>Ár (Ft)</th>
+            <th>Készlet</th>
+          </tr>
+
+          <?php foreach ($allowedSizes as $sz): ?>
+            <?php
+              $checked = isset($currentVariants[$sz]);
+              $pval = $checked ? (int)$currentVariants[$sz]['price'] : 0;
+              $sval = $checked ? (int)$currentVariants[$sz]['stock'] : 0;
+            ?>
+            <tr>
+              <td style="text-align:center;">
+                <input type="checkbox" name="sizes[<?= $sz ?>]" value="1" <?= $checked ? 'checked' : '' ?>>
+              </td>
+              <td><strong><?= $sz ?> ml</strong></td>
+              <td>
+                <input type="number" name="variant_price[<?= $sz ?>]" min="0" value="<?= $pval ?>">
+              </td>
+              <td>
+                <input type="number" name="variant_stock[<?= $sz ?>]" min="0" value="<?= $sval ?>">
+              </td>
+            </tr>
+          <?php endforeach; ?>
+        </table>
+      </div>
+
+      <div class="form-group full">
+        <div class="button-row">
+          <button type="submit" class="btn-primary">Mentés</button>
+          <a href="products.php" class="btn-secondary">Vissza</a>
+        </div>
+      </div>
+    </form>
+  </section>
+</main>
 
 </body>
 </html>

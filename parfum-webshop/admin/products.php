@@ -8,9 +8,8 @@ require __DIR__ . '/../includes/functions.php';
 require_login();
 require_admin();
 
-// termékek listája kategória névvel
 $stmt = $pdo->query(
-  "SELECT p.id, p.brand, p.name, p.price, p.stock, c.name AS category_name
+  "SELECT p.id, p.brand, p.name, p.price, p.stock, p.image_url, c.name AS category_name
    FROM products p
    LEFT JOIN categories c ON c.id = p.category_id
    ORDER BY p.id DESC"
@@ -19,48 +18,80 @@ $products = $stmt->fetchAll();
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Admin - Termékek</title></head>
+<head>
+  <meta charset="utf-8">
+  <title>Admin - Termékek</title>
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
 <body>
-<h1>Admin – Termékek</h1>
-<p><a href="index.php">← Admin menü</a></p>
 
-<p>
-  <a href="product_edit.php" style="display:inline-block;padding:6px 10px;border:1px solid #333;text-decoration:none;">
-    + Új termék
-  </a>
-</p>
+<header class="navbar">
+  <div class="logo">
+    <a href="../index.php">Parfum p'Dm Admin</a>
+  </div>
 
-<table border="1" cellpadding="6">
-  <tr>
-    <th>ID</th>
-    <th>Márka</th>
-    <th>Név</th>
-    <th>Kategória</th>
-    <th>Ár</th>
-    <th>Készlet</th>
-    <th>Műveletek</th>
-  </tr>
+  <nav class="nav-links">
+    <a href="index.php">Admin menü</a>
+    <a href="orders.php">Rendelések</a>
+  </nav>
 
-  <?php foreach ($products as $p): ?>
-    <tr>
-      <td><?= (int)$p['id'] ?></td>
-      <td><?= h((string)$p['brand']) ?></td>
-      <td><?= h((string)$p['name']) ?></td>
-      <td><?= h((string)($p['category_name'] ?? '-')) ?></td>
-      <td><?= (int)$p['price'] ?> Ft</td>
-      <td><?= (int)$p['stock'] ?></td>
-      <td>
-        <a href="product_edit.php?id=<?= (int)$p['id'] ?>">Szerkesztés</a>
+  <div class="nav-actions">
+    <a href="product_edit.php">+ Új termék</a>
+    <a href="../index.php">Webshop</a>
+  </div>
+</header>
 
-        <form action="product_delete.php" method="post" style="display:inline"
-              onsubmit="return confirm('Biztosan törlöd ezt a terméket?');">
-          <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
-          <button type="submit">Törlés</button>
-        </form>
-      </td>
-    </tr>
-  <?php endforeach; ?>
-</table>
+<main class="admin-page">
+  <h1 class="admin-title">Admin – Termékek</h1>
+
+  <section class="admin-card">
+    <h2>Terméklista</h2>
+
+    <div class="table-wrap">
+      <table class="admin-table">
+        <tr>
+          <th>ID</th>
+          <th>Kép</th>
+          <th>Márka</th>
+          <th>Név</th>
+          <th>Kategória</th>
+          <th>Ár</th>
+          <th>Készlet</th>
+          <th>Műveletek</th>
+        </tr>
+
+        <?php foreach ($products as $p): ?>
+          <tr>
+            <td><?= (int)$p['id'] ?></td>
+            <td>
+              <?php if (!empty($p['image_url'])): ?>
+                <img src="../<?= h((string)$p['image_url']) ?>" alt="<?= h((string)$p['name']) ?>" style="width:56px;height:56px;object-fit:cover;border-radius:10px;">
+              <?php else: ?>
+                -
+              <?php endif; ?>
+            </td>
+            <td><?= h((string)$p['brand']) ?></td>
+            <td><?= h((string)$p['name']) ?></td>
+            <td><?= h((string)($p['category_name'] ?? '-')) ?></td>
+            <td><?= (int)$p['price'] ?> Ft</td>
+            <td><?= (int)$p['stock'] ?></td>
+            <td>
+              <div class="button-row">
+                <a href="product_edit.php?id=<?= (int)$p['id'] ?>" class="btn-edit">Szerkesztés</a>
+
+                <form action="product_delete.php" method="post" style="display:inline"
+                      onsubmit="return confirm('Biztosan törlöd ezt a terméket?');">
+                  <input type="hidden" name="id" value="<?= (int)$p['id'] ?>">
+                  <button type="submit" class="btn-danger">Törlés</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    </div>
+  </section>
+</main>
 
 </body>
 </html>

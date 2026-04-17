@@ -4,78 +4,110 @@ require __DIR__ . '/includes/auth.php';
 require __DIR__ . '/includes/functions.php';
 
 require_login();
-$userId = (int)$_SESSION['user_id'];
+$userId = (int) $_SESSION['user_id'];
 
-function load_cart(PDO $pdo, int $userId): array {
+function load_cart(PDO $pdo, int $userId): array
+{
   $st = $pdo->prepare(
-    "SELECT ci.product_id, ci.quantity, p.price, p.stock
-     FROM cart_items ci JOIN products p ON p.id=ci.product_id
-     WHERE ci.user_id=?"
+    "SELECT ci.product_id, ci.quantity, p.name, p.brand, p.price, p.stock
+     FROM cart_items ci
+     JOIN products p ON p.id = ci.product_id
+     WHERE ci.user_id = ?"
   );
   $st->execute([$userId]);
   return $st->fetchAll();
 }
 
-$error = '';
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  $shipping_name = post('shipping_name');
-  $shipping_address = post('shipping_address');
-  $shipping_phone = post('shipping_phone');
+$items = load_cart($pdo, $userId);
 
-$email = post('shipping_email');
-
-// ÜRES + HIBÁS EMAIL ELLENŐRZÉS
-if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-  $error = "Adj meg egy érvényes email címet.";
+$total = 0;
+foreach ($items as $it) {
+  $total += (int) $it['price'] * (int) $it['quantity'];
 }
 
-  if ($shipping_name === '' || $shipping_address === '' || $shipping_phone === '') {
-    $error = "Minden szállítási adat kötelező.";
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $shipping_name = trim(post('shipping_name'));
+  $shipping_address = trim(post('shipping_address'));
+  $shipping_phone = trim(post('shipping_phone'));
+  $shipping_email = trim(post('shipping_email'));
+
+  if (
+    $shipping_name === '' ||
+    $shipping_address === '' ||
+    $shipping_phone === '' ||
+    $shipping_email === ''
+  ) {
+    $error = 'Minden szállítási adat megadása kötelező.';
+  } elseif (!filter_var($shipping_email, FILTER_VALIDATE_EMAIL)) {
+    $error = 'Adj meg egy érvényes email címet.';
   } else {
     $cart = load_cart($pdo, $userId);
+
     if (!$cart) {
-      $error = "A kosár üres.";
+      $error = 'A kosár üres.';
     } else {
       try {
         $pdo->beginTransaction();
 
-        // készlet ellenőrzés + total
         $total = 0;
         foreach ($cart as $it) {
-          if ((int)$it['quantity'] > (int)$it['stock']) {
-            throw new Exception("Nincs elég készlet az egyik termékből.");
+          if ((int) $it['quantity'] > (int) $it['stock']) {
+            throw new Exception('Nincs elég készlet az egyik termékből.');
           }
-          $total += (int)$it['price'] * (int)$it['quantity'];
+          $total += (int) $it['price'] * (int) $it['quantity'];
         }
-        // orders insert
+
         $pdo->prepare(
           "INSERT INTO orders (user_id, total_price, status, shipping_name, shipping_address, shipping_phone)
            VALUES (?, ?, 'NEW', ?, ?, ?)"
-        )->execute([$userId, $total, $shipping_name, $shipping_address, $shipping_phone]);
-        $orderId = (int)$pdo->lastInsertId();
+        )->execute([
+              $userId,
+              $total,
+              $shipping_name,
+              $shipping_address,
+              $shipping_phone
+            ]);
 
-        // order_items + stock csökkentés
+        $orderId = (int) $pdo->lastInsertId();
+
         $insItem = $pdo->prepare(
           "INSERT INTO order_items (order_id, product_id, unit_price, quantity, line_total)
            VALUES (?, ?, ?, ?, ?)"
         );
-        $decStock = $pdo->prepare("UPDATE products SET stock = stock - ? WHERE id=?");
+
+        $decStock = $pdo->prepare(
+          "UPDATE products SET stock = stock - ? WHERE id = ?"
+        );
 
         foreach ($cart as $it) {
-          $line = (int)$it['price'] * (int)$it['quantity'];
-          $insItem->execute([$orderId, (int)$it['product_id'], (int)$it['price'], (int)$it['quantity'], $line]);
-          $decStock->execute([(int)$it['quantity'], (int)$it['product_id']]);
+          $line = (int) $it['price'] * (int) $it['quantity'];
+
+          $insItem->execute([
+            $orderId,
+            (int) $it['product_id'],
+            (int) $it['price'],
+            (int) $it['quantity'],
+            $line
+          ]);
+
+          $decStock->execute([
+            (int) $it['quantity'],
+            (int) $it['product_id']
+          ]);
         }
 
-        // kosár ürítés
-        $pdo->prepare("DELETE FROM cart_items WHERE user_id=?")->execute([$userId]);
+        $pdo->prepare("DELETE FROM cart_items WHERE user_id = ?")->execute([$userId]);
 
         $pdo->commit();
-        header("Location: orders.php");
+        header('Location: orders.php');
         exit;
       } catch (Throwable $e) {
-        $pdo->rollBack();
-        $error = "Hiba a rendelésnél: " . $e->getMessage();
+        if ($pdo->inTransaction()) {
+          $pdo->rollBack();
+        }
+        $error = 'Hiba a rendelésnél: ' . $e->getMessage();
       }
     }
   }
@@ -83,184 +115,158 @@ if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
 ?>
 <!doctype html>
 <html lang="hu">
-<head><meta charset="utf-8"><title>Rendelés</title>
-<link rel="stylesheet" href="css/checkout.css"></head>
+
+<head>
+  <meta charset="utf-8">
+  <title>Rendelés leadása</title>
+  <link rel="stylesheet" href="css/orders.css">
+  <link rel="stylesheet" href="css/footer.css">
+</head>
+
 <body>
 
-<header class="navbar">
+  <header class="navbar">
     <div class="logo">
       <a href="index.php">Parfum p'Dm</a>
     </div>
-    <nav class="nav-links desktop-menu">
+
+    <nav class="nav-links">
       <a href="products.php">Összes parfüm</a>
       <a href="products.php?category_id=2">Csak férfi</a>
       <a href="products.php?category_id=1">Csak női</a>
       <a href="products.php?category_id=3">Csak unisex</a>
     </nav>
 
-
     <div class="nav-actions">
-      <div class="cart-wrapper">
-        <button onclick="toggleCart()">🛒 Kosár</button>
-        <div class="dropdown cart-dropdown">
-          <?php require_login();
-          $userId = (int) $_SESSION['user_id'];
+      <a href="orders.php">Rendeléseim</a>
+    </div>
+  </header>
 
-          if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $action = post('action');
+  <main>
 
-            if ($action === 'add') {
-              $pid = (int) post('product_id');
-              $qty = max(1, (int) post('qty', '1'));
+    <div class="page-wrap">
+      <h1 class="page-title">Rendelés leadása</h1>
 
-              // készlet ellenőrzés
-              $st = $pdo->prepare("SELECT stock FROM products WHERE id=?");
-              $st->execute([$pid]);
-              $row = $st->fetch();
-              if (!$row) {
-                die("Nincs ilyen termék.");
-              }
-              $stock = (int) $row['stock'];
-              if ($qty > $stock) {
-                die("Nincs elég készlet.");
-              }
+      <?php if ($error): ?>
+        <div class="alert-error"><?= h($error) ?></div>
+      <?php endif; ?>
 
-              // upsert
-              $pdo->prepare(
-                "INSERT INTO cart_items (user_id, product_id, quantity)
-       VALUES (?, ?, ?)
-       ON DUPLICATE KEY UPDATE quantity = LEAST(quantity + VALUES(quantity), ?)"
-              )->execute([$userId, $pid, $qty, $stock]);
+      <div class="card">
+        <h2>Szállítási adatok</h2>
 
-              header('Location: cart.php');
-              exit;
-            }
+        <form method="post" class="checkout-form">
+          <div class="form-group">
+            <label for="shipping_name">Név</label>
+            <input type="text" id="shipping_name" name="shipping_name" value="<?= h(post('shipping_name')) ?>">
+          </div>
 
-            if ($action === 'update') {
-              $id = (int) post('item_id');
-              $qty = max(1, (int) post('qty', '1'));
+          <div class="form-group">
+            <label for="shipping_email">Email</label>
+            <input type="email" id="shipping_email" name="shipping_email" value="<?= h(post('shipping_email')) ?>">
+          </div>
 
-              // készlet check a termékhez
-              $st = $pdo->prepare(
-                "SELECT ci.product_id, p.stock
-       FROM cart_items ci JOIN products p ON p.id=ci.product_id
-       WHERE ci.id=? AND ci.user_id=?"
-              );
-              $st->execute([$id, $userId]);
-              $row = $st->fetch();
-              if (!$row) {
-                die("Nincs ilyen kosár tétel.");
-              }
-              if ($qty > (int) $row['stock']) {
-                die("Nincs elég készlet.");
-              }
+          <div class="form-group">
+            <label for="shipping_phone">Telefon</label>
+            <input type="text" id="shipping_phone" name="shipping_phone" value="<?= h(post('shipping_phone')) ?>">
+          </div>
 
-              $pdo->prepare("UPDATE cart_items SET quantity=? WHERE id=? AND user_id=?")
-                ->execute([$qty, $id, $userId]);
+          <div class="form-group full">
+            <label for="shipping_address">Cím</label>
+            <input type="text" id="shipping_address" name="shipping_address" value="<?= h(post('shipping_address')) ?>">
+          </div>
 
-              header('Location: cart.php');
-              exit;
-            }
-
-            if ($action === 'delete') {
-              $id = (int) post('item_id');
-              $pdo->prepare("DELETE FROM cart_items WHERE id=? AND user_id=?")
-                ->execute([$id, $userId]);
-              header('Location: cart.php');
-              exit;
-            }
-          }
-
-          $stmt = $pdo->prepare(
-            "SELECT ci.id, ci.quantity, p.name, p.brand, p.price, p.stock
-   FROM cart_items ci
-   JOIN products p ON p.id = ci.product_id
-   WHERE ci.user_id = ?
-   ORDER BY ci.id DESC"
-          );
-          $stmt->execute([$userId]);
-          $items = $stmt->fetchAll();
-
-          $total = 0;
-          foreach ($items as $it)
-            $total += (int) $it['price'] * (int) $it['quantity'];
-          ?>
-
-
-
-          <?php if (!$items): ?>
-            <p>A kosár üres.</p>
-          <?php else: ?>
-            <table border="1" cellpadding="6">
-              <tr>
-                <th>Termék</th>
-                <th>Ár</th>
-                <th>Mennyiség</th>
-                <th>Részösszeg</th>
-                <th>Művelet</th>
-              </tr>
-              <?php foreach ($items as $it):
-                $sub = (int) $it['price'] * (int) $it['quantity'];
-                ?>
-                <tr>
-                  <td><?= h($it['brand']) ?> – <?= h($it['name']) ?></td>
-                  <td><?= (int) $it['price'] ?> Ft</td>
-                  <td>
-                    <form method="post" style="display:inline;">
-                      <input type="hidden" name="action" value="update">
-                      <input type="hidden" name="item_id" value="<?= $it['id'] ?>">
-                      <input type="number" name="qty" min="1" max="<?= $it['stock'] ?>" value="<?= $it['quantity'] ?>"
-                        style="width:70px;">
-                      <button type="submit">Mentés</button>
-                    </form>
-                  </td>
-                  <td><?= $sub ?> Ft</td>
-                  <td>
-                    <form method="post" style="display:inline;" onsubmit="return confirm('Törlöd?');">
-                      <input type="hidden" name="action" value="delete">
-                      <input type="hidden" name="item_id" value="<?= $it['id'] ?>">
-                      <button type="submit">Törlés</button>
-                    </form>
-                  </td>
-                </tr>
-              <?php endforeach; ?>
-            </table>
-
-            <p><strong>Összesen: <?= $total ?> Ft</strong></p>
-            <p><a href="checkout.php">Tovább a rendeléshez →</a></p>
-          <?php endif; ?>
-          <a href="cart.php" class="btn-small">Kosár megnyitása</a>
-        </div>
+          <div class="form-group full">
+            <button type="submit" class="btn-primary">Megrendelés</button>
+          </div>
+        </form>
       </div>
-      <div class="profile-wrapper">
-        <button onclick="toggleProfile()">👤 Profil</button>
-        <div class="dropdown profile-dropdown">
-          <?php if (is_logged_in()): ?>
-            <p>Üdvözlünk, <?= h($_SESSION['username'] ?? 'Felhasználó') ?>!</p>
-            <?php if (is_admin()): ?>
-              <a href="admin.php" class="btn-small">Admin</a>
-            <?php endif; ?>
-            <a href="logout.php" class="btn-small">Kijelentkezés</a>
-          <?php else: ?>
-            <a href="login.php" class="btn-small">Bejelentkezés</a>
-            <a href="register.php" class="btn-small">Regisztráció</a>
-          <?php endif; ?>
+
+      <div class="card">
+        <h2>Rendelési összegzés</h2>
+
+        <?php if (!$items): ?>
+          <div class="alert-info">A kosarad jelenleg üres.</div>
+        <?php else: ?>
+          <table class="order-table">
+            <tr>
+              <th>Termék</th>
+              <th>Ár</th>
+              <th>Mennyiség</th>
+              <th>Részösszeg</th>
+            </tr>
+
+            <?php foreach ($items as $it): ?>
+              <?php $sub = (int) $it['price'] * (int) $it['quantity']; ?>
+              <tr>
+                <td><?= h($it['brand']) ?> – <?= h($it['name']) ?></td>
+                <td><?= (int) $it['price'] ?> Ft</td>
+                <td><?= (int) $it['quantity'] ?></td>
+                <td><?= $sub ?> Ft</td>
+              </tr>
+            <?php endforeach; ?>
+          </table>
+
+          <div class="summary-box" style="margin-top:20px;">
+            <div class="summary-row">
+              <span>Szállítás</span>
+              <span>0 Ft</span>
+            </div>
+            <div class="summary-row total">
+              <span>Végösszeg</span>
+              <span><?= (int) $total ?> Ft</span>
+            </div>
+          </div>
+        <?php endif; ?>
+
+        <div class="button-row">
+          <a href="cart.php" class="btn-secondary">← Vissza a kosárhoz</a>
         </div>
       </div>
     </div>
-  </header>
-  
-<h1>Rendelés leadása</h1>
-<a href="cart.php"><button class="btn"> ← Vissza a kosárhoz </button> </a>
 
-<?php if ($error) echo '<p style="color:red;">'.h($error).'</p>'; ?>
+  </main>
 
-<form method="post">
-  <label>Név: <input name="shipping_name" value="<?=h(post('shipping_name'))?>"></label><br>
-  <label>Telefon: <input name="shipping_phone" value="<?=h(post('shipping_phone'))?>"></label><br>
-  <label>Email: <input type="email" name="shipping_email" value="<?=h(post('shipping_email'))?>" required></label><br>
-  <label>Cím: <input name="shipping_address" value="<?=h(post('shipping_address'))?>"></label><br>
-  <button type="submit">Megrendelés</button>
-</form>
+  <footer class="site-footer">
+    <div class="footer-container">
+
+      <div class="footer-column">
+        <h3>Parfum p'Dm</h3>
+        <p>
+          Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+        </p>
+      </div>
+
+      <div class="footer-column">
+        <h3>Kapcsolat</h3>
+        <p>Email: info@parfumpdm.hu</p>
+        <p>Telefon: +36 20 123 4567</p>
+        <p>Cím: 1182 Budapest, Illat utca 12.</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>Információk</h3>
+        <a href="products.php">Összes parfüm</a>
+        <a href="cart.php">Kosár</a>
+        <a href="orders.php">Rendeléseim</a>
+        <a href="login.php">Bejelentkezés</a>
+      </div>
+
+      <div class="footer-column">
+        <h3>Vásárlás</h3>
+        <p>Biztonságos rendelés</p>
+        <p>Gyors kiszállítás</p>
+        <p>Minőségi termékek</p>
+        <p>Ügyfélszolgálat minden hétköznap</p>
+      </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+      <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
+    </div>
+  </footer>
+
 </body>
+
 </html>

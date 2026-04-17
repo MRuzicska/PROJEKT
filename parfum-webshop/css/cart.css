@@ -4,15 +4,30 @@
 
 body {
   margin: 0;
-  padding: 24px;
+  padding: 0px;
   font-family: "Segoe UI", Arial, sans-serif;
   background: linear-gradient(135deg, #F3F3E0 0%, #1a1a1a 100%);
   color: #DDA853;
   min-height: 100vh;
 }
 
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  padding: 0;
+  margin: 0;
+}
+
+.site-footer {
+  width: 100%;
+  margin-top: 0;
+}
+
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 0px;
   font-size: 36px;
   font-weight: 800;
   color: #DDA853;
@@ -105,23 +120,19 @@ input[type="number"] {
   background: #0f2a38;
 }
 
+/* ===== NAVBAR ===== */
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #0f2a38;
   padding: 10px 20px;
-  border-radius: 14px;
 }
 
 .navbar .logo {
   display: flex;
   align-items: center;
   gap: 10px;
-}
-
-.navbar .logo img {
-  height: 40px;
 }
 
 .navbar a {
@@ -134,23 +145,33 @@ input[type="number"] {
   color: #fff;
   margin: 0 10px;
   text-decoration: none;
+  display: inline-block;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.nav-links a:hover {
+  transform: scale(1.08);
 }
 
 .nav-actions {
   display: flex;
   gap: 10px;
-  position: relative;
 }
 
 .nav-actions button {
   background: #DDEB9D;
   border: none;
   padding: 8px 12px;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.cart-wrapper,
+.nav-actions button:hover {
+  transform: scale(1.08);
+}
+
+/* ===== DROPDOWN ===== */
 .profile-wrapper {
   position: relative;
 }
@@ -174,46 +195,27 @@ input[type="number"] {
   display: block;
 }
 
-.dropdown table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 12px;
-}
-
-.dropdown th,
-.dropdown td {
-  padding: 8px 6px;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-  font-size: 14px;
-}
-
-.dropdown th {
-  font-weight: 700;
-  color: #333;
-}
-
 .dropdown p {
   margin: 0 0 12px 0;
   font-size: 14px;
   color: #333;
 }
 
-.dropdown button {
-  width: 100%;
-  padding: 10px 12px;
-  margin-top: 8px;
-  border: none;
-  border-radius: 10px;
-  background: #DDEB9D;
-  color: #183B4E;
-  font-weight: 700;
-  cursor: pointer;
+.btn-small {
+  display: inline-block;
+  margin-top: 10px;
+  padding: 6px 10px;
+  background: #183B4E;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-.dropdown button:hover {
+.btn-small:hover {
   background: #DDA853;
   color: #1a1a1a;
+  transform: scale(1.08);
 }
 
   .button-row {

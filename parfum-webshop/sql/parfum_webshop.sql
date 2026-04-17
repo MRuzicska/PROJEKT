@@ -774,3 +774,22 @@ INSERT INTO product_variants (product_id, size_ml, price, stock) VALUES
 (72, 50, 26990, 17),
 (73, 50, 24990, 19);
 
+
+
+SHOW INDEX FROM cart_items;
+
+SHOW CREATE TABLE cart_items;
+
+ALTER TABLE cart_items
+ADD INDEX idx_cart_user_id (user_id);
+
+ALTER TABLE cart_items
+DROP INDEX uq_user_product;
+
+ALTER TABLE cart_items
+ADD UNIQUE KEY uq_user_product_variant (user_id, product_id, variant_id);
+
+ALTER TABLE cart_items
+ADD CONSTRAINT cart_items_ibfk_2
+FOREIGN KEY (product_id) REFERENCES products(id)
+ON UPDATE CASCADE;
