@@ -288,6 +288,7 @@ foreach ($items as $it) {
 <?php if (!$items): ?>
   <p>A kosár üres.</p>
 <?php else: ?>
+  <div class="cart-table-wrap">
   <table border="1" cellpadding="6">
     <tr><th>Termék</th><th>Ár</th><th>Mennyiség</th><th>Részösszeg</th><th>Művelet</th></tr>
     <?php foreach ($items as $it): 
@@ -316,6 +317,7 @@ foreach ($items as $it) {
       </tr>
     <?php endforeach; ?>
   </table>
+  </div>
   <div class="button-row">
     <a href="index.php" class="btnn">← Vissza a termékekhez</a>
     <a href="checkout.php" class="btn">Tovább a rendeléshez →</a>

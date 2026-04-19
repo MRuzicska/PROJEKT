@@ -460,6 +460,44 @@ hr {
   text-align: center;
 }
 
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 30px 0;
+}
+
+.page-btn {
+  display: inline-block;
+  padding: 10px 16px;
+  background: #DDEB9D;
+  color: #183B4E;
+  text-decoration: none;
+  font-weight: 700;
+  border-radius: 8px;
+  transition: 0.2s ease;
+}
+
+.page-btn:hover {
+  background: #DDA853;
+  color: #1a1a1a;
+}
+
+.page-btn.disabled {
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.page-info {
+  padding: 10px 16px;
+  background: #183B4E;
+  color: #fff;
+  border-radius: 8px;
+  font-weight: 700;
+}
+
 
 
 /* ===== MOBILE ===== */
