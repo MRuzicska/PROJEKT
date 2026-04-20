@@ -456,6 +456,9 @@ $brands = $pdo->query("SELECT DISTINCT brand FROM products WHERE brand <> '' ORD
     function toggleProfile() {
       document.querySelector('.profile-dropdown').classList.toggle('show');
     }
+    function toggleCart() {
+        document.querySelector('.cart-dropdown').classList.toggle('show');
+      }
 
     document.addEventListener('click', function (e) {
       if (!e.target.closest('.profile-wrapper')) {

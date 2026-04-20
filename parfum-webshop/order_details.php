@@ -25,7 +25,6 @@ if ($isAdmin && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_statu
   if (!in_array($newStatus, $allowedStatuses, true)) {
     $error = "Érvénytelen státusz.";
   } else {
-    // TODO: igazítsd a táblaneveket/oszlopneveket
     $stmt = $pdo->prepare("UPDATE orders SET status = :st WHERE id = :id");
     $stmt->execute([':st' => $newStatus, ':id' => $orderId]);
     header("Location: order_details.php?id=" . $orderId);

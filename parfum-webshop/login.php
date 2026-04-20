@@ -16,8 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $error = 'Hibás email vagy jelszó.';
   } else {
     $_SESSION['user_id'] = (int) $user['id'];
-    $_SESSION['user_name'] = $user['name'];
+    $_SESSION['username'] = $user['name'];
     $_SESSION['role'] = $user['role'];
+    cart_merge_session_into_user($pdo, (int) $user['id']);
     header('Location: index.php');
     exit;
   }

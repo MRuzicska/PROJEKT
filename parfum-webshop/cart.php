@@ -3,6 +3,8 @@ require __DIR__ . '/includes/db.php';
 require __DIR__ . '/includes/auth.php';
 require __DIR__ . '/includes/functions.php';
 
+ensure_session_cart();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $action = post('action');
 
@@ -11,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $variantId = (int) post('variant_id');
     $qty = max(1, (int) post('qty', '1'));
 
-    // Ha nincs kiválasztott variant, automatikusan az első elérhetőt választjuk
     if ($variantId <= 0) {
         $defaultVariantStmt = $pdo->prepare("
             SELECT id, product_id, price, stock
@@ -34,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             SELECT id, product_id, price, stock
             FROM product_variants
             WHERE id = ? AND product_id = ?
+            LIMIT 1
         ");
         $variantStmt->execute([$variantId, $pid]);
         $variant = $variantStmt->fetch();
@@ -46,7 +48,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($qty > $stock) {
-        die("Nincs elég készlet.");
+        $qty = $stock;
+    }
+
+    if ($qty <= 0) {
+        die("Nincs készleten ez a kiszerelés.");
     }
 
     if (is_logged_in()) {
@@ -75,11 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ")->execute([$userId, $pid, $variantId, $qty]);
         }
     } else {
-        if (!isset($_SESSION['cart'])) {
-            $_SESSION['cart'] = [];
-        }
-
-        $sessionKey = $pid . '_' . $variantId;
+        $sessionKey = cart_session_key($pid, $variantId);
 
         if (isset($_SESSION['cart'][$sessionKey])) {
             $_SESSION['cart'][$sessionKey]['quantity'] += $qty;
@@ -98,22 +100,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header('Location: cart.php');
     exit;
-}
+  }
 
   if ($action === 'update') {
-    $id = (int) post('item_id');
+    $id = post('item_id');
     $qty = max(1, (int) post('qty', '1'));
 
     if (is_logged_in()) {
       $userId = (int) $_SESSION['user_id'];
 
-      $st = $pdo->prepare(
-        "SELECT ci.product_id, p.stock
-         FROM cart_items ci
-         JOIN products p ON p.id = ci.product_id
-         WHERE ci.id = ? AND ci.user_id = ?"
-      );
-      $st->execute([$id, $userId]);
+      $st = $pdo->prepare("
+        SELECT ci.id, ci.product_id, ci.variant_id, COALESCE(v.stock, p.stock) AS stock
+        FROM cart_items ci
+        JOIN products p ON p.id = ci.product_id
+        LEFT JOIN product_variants v ON v.id = ci.variant_id
+        WHERE ci.id = ? AND ci.user_id = ?
+        LIMIT 1
+      ");
+      $st->execute([(int)$id, $userId]);
       $row = $st->fetch();
 
       if (!$row) {
@@ -125,28 +129,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       }
 
       $pdo->prepare("UPDATE cart_items SET quantity=? WHERE id=? AND user_id=?")
-          ->execute([$qty, $id, $userId]);
+          ->execute([$qty, (int)$id, $userId]);
     } else {
-      if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
+      if (!isset($_SESSION['cart'][$id])) {
+        header('Location: cart.php');
+        exit;
       }
 
-      $pid = $id;
+      $productId = (int)($_SESSION['cart'][$id]['product_id'] ?? 0);
+      $variantId = (int)($_SESSION['cart'][$id]['variant_id'] ?? 0);
 
-      $st = $pdo->prepare("SELECT stock FROM products WHERE id=?");
-      $st->execute([$pid]);
+      $st = $pdo->prepare("
+        SELECT stock
+        FROM product_variants
+        WHERE id = ? AND product_id = ?
+        LIMIT 1
+      ");
+      $st->execute([$variantId, $productId]);
       $row = $st->fetch();
 
       if (!$row) {
-        unset($_SESSION['cart'][$pid]);
+        unset($_SESSION['cart'][$id]);
       } else {
-        $stock = (int) $row['stock'];
+        $stock = (int)$row['stock'];
 
         if ($qty > $stock) {
           $qty = $stock;
         }
 
-        $_SESSION['cart'][$pid] = $qty;
+        $_SESSION['cart'][$id]['quantity'] = $qty;
       }
     }
 
@@ -155,18 +166,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   }
 
   if ($action === 'delete') {
-    $id = (int) post('item_id');
+    $id = post('item_id');
 
     if (is_logged_in()) {
       $userId = (int) $_SESSION['user_id'];
 
       $pdo->prepare("DELETE FROM cart_items WHERE id=? AND user_id=?")
-          ->execute([$id, $userId]);
+          ->execute([(int)$id, $userId]);
     } else {
-      if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-      }
-
       unset($_SESSION['cart'][$id]);
     }
 
@@ -180,55 +187,65 @@ $items = [];
 if (is_logged_in()) {
   $userId = (int) $_SESSION['user_id'];
 
-  $stmt = $pdo->prepare(
-    "SELECT ci.id, ci.product_id, ci.quantity, p.name, p.brand, p.price, p.stock
-     FROM cart_items ci
-     JOIN products p ON p.id = ci.product_id
-     WHERE ci.user_id = ?
-     ORDER BY ci.id DESC"
-  );
+  $stmt = $pdo->prepare("
+    SELECT ci.id, ci.product_id, ci.variant_id, ci.quantity,
+           p.name, p.brand,
+           COALESCE(v.price, p.price) AS price,
+           COALESCE(v.stock, p.stock) AS stock
+    FROM cart_items ci
+    JOIN products p ON p.id = ci.product_id
+    LEFT JOIN product_variants v ON v.id = ci.variant_id
+    WHERE ci.user_id = ?
+    ORDER BY ci.id DESC
+  ");
   $stmt->execute([$userId]);
   $items = $stmt->fetchAll();
 } else {
-  if (!isset($_SESSION['cart'])) {
-    $_SESSION['cart'] = [];
-  }
-
   if (!empty($_SESSION['cart'])) {
-    $productIds = array_keys($_SESSION['cart']);
+    foreach ($_SESSION['cart'] as $sessionKey => $sessionItem) {
+      $productId = (int)($sessionItem['product_id'] ?? 0);
+      $variantId = (int)($sessionItem['variant_id'] ?? 0);
+      $qty = max(1, (int)($sessionItem['quantity'] ?? 1));
 
-    if (!empty($productIds)) {
-      $placeholders = implode(',', array_fill(0, count($productIds), '?'));
-
-      $stmt = $pdo->prepare(
-        "SELECT id, name, brand, price, stock
-         FROM products
-         WHERE id IN ($placeholders)"
-      );
-      $stmt->execute($productIds);
-      $products = $stmt->fetchAll();
-
-      foreach ($products as $product) {
-        $pid = (int) $product['id'];
-        $qty = (int) ($_SESSION['cart'][$pid] ?? 0);
-
-        if ($qty > 0) {
-          if ($qty > (int) $product['stock']) {
-            $qty = (int) $product['stock'];
-            $_SESSION['cart'][$pid] = $qty;
-          }
-
-          $items[] = [
-            'id' => $pid,
-            'product_id' => $pid,
-            'quantity' => $qty,
-            'name' => $product['name'],
-            'brand' => $product['brand'],
-            'price' => $product['price'],
-            'stock' => $product['stock'],
-          ];
-        }
+      if ($productId <= 0 || $variantId <= 0) {
+        unset($_SESSION['cart'][$sessionKey]);
+        continue;
       }
+
+      $stmt = $pdo->prepare("
+        SELECT p.id, p.name, p.brand, v.price, v.stock
+        FROM products p
+        JOIN product_variants v ON v.product_id = p.id
+        WHERE p.id = ? AND v.id = ?
+        LIMIT 1
+      ");
+      $stmt->execute([$productId, $variantId]);
+      $product = $stmt->fetch();
+
+      if (!$product) {
+        unset($_SESSION['cart'][$sessionKey]);
+        continue;
+      }
+
+      if ($qty > (int)$product['stock']) {
+        $qty = (int)$product['stock'];
+        $_SESSION['cart'][$sessionKey]['quantity'] = $qty;
+      }
+
+      if ($qty <= 0) {
+        unset($_SESSION['cart'][$sessionKey]);
+        continue;
+      }
+
+      $items[] = [
+        'id' => $sessionKey,
+        'product_id' => $productId,
+        'quantity' => $qty,
+        'name' => $product['name'],
+        'brand' => $product['brand'],
+        'price' => $product['price'],
+        'stock' => $product['stock'],
+      ];
     }
   }
 }

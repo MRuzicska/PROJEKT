@@ -233,102 +233,102 @@ $products = $pdo->query("
     </div>
   </header>
 
-
-  <!-- ===== SLIDER ===== -->
-  <div class="slider">
-    <a class="prev" href="javascript:void(0)" onclick="prevSlide()">&#10094;</a>
-    <div class="slide-image">
-      <img id="slider-img" src="<?= $sliderImages[0] ?>" alt="Slider">
-    </div>
-    <a class="next" href="javascript:void(0)" onclick="nextSlide()">&#10095;</a>
-  </div>
-
-  <div class="info-text">
-    <p>
-      Fedezd fel a parfümök világát! 💧 Kínálatunkban a klasszikus aromáktól a modern, trendi illatokig mindent
-      megtalálsz.
-      Ne hagyd, hogy az unalmas napok eluralkodjanak – egy igazán jó illat mindig feldobja a hangulatod!
-      Kattints, szagolj, élvezd – a parfüm nem csak egy illat, hanem élmény is.
-    </p>
-  </div>
-
-  <!-- ===== TERMÉKKÁRTYÁK ===== -->
-  <div class="product-grid" id="product-grid">
-    <?php foreach ($products as $p): ?>
-      <div class="product-card" onclick="window.location.href='product.php?id=<?= (int) $p['id'] ?>'">
-        <div class="product-image">
-          <?php if (!empty($p['image_url'])): ?>
-            <img src="<?= h($p['image_url']) ?>" alt="<?= h($p['name']) ?>">
-          <?php endif; ?>
-        </div>
-        <div class="product-name"><?= h($p['name']) ?></div>
-        <div class="product-brand"><?= h($p['brand']) ?></div>
-        <div class="product-category">(<?= h($p['category_name']) ?>)</div>
-        <div class="product-price">Ár: <?= (int) $p['price'] ?> Ft</div>
-        <div class="product-stock">Készlet: <?= (int) $p['stock'] ?></div>
-        <?php if ((int) $p['stock'] > 0): ?>
-          <form class="product-actions-row" method="post" action="cart.php" onclick="event.stopPropagation();">
-            <input type="hidden" name="action" value="add">
-            <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
-
-            <input type="number" name="qty" value="1" min="1" max="<?= (int) $p['stock'] ?>" class="qty-input">
-
-            <button type="submit" class="add-to-cart-btn">Kosárba</button>
-          </form>
-        <?php else: ?>
-          <div class="sold-out">Elfogyott</div>
-        <?php endif; ?>
+  <main class="page-container">
+    <!-- ===== SLIDER ===== -->
+    <div class="slider">
+      <a class="prev" href="javascript:void(0)" onclick="prevSlide()">&#10094;</a>
+      <div class="slide-image">
+        <img id="slider-img" src="<?= $sliderImages[0] ?>" alt="Slider">
       </div>
-    <?php endforeach; ?>
-  </div>
+      <a class="next" href="javascript:void(0)" onclick="nextSlide()">&#10095;</a>
+    </div>
 
-  <!-- Termék lapozás -->
-  <div class="slider-nav">
-    <button onclick="prevProducts()">← Előző</button>
-    <button onclick="nextProducts()">Következő →</button>
-    <a href="products.php" class="all-products">Összes parfüm</a>
-  </div>
-
-  <!-- Footer -->
-  <footer class="site-footer">
-  <div class="footer-container">
-
-    <div class="footer-column">
-      <h3>Parfum p'Dm</h3>
+    <div class="info-text">
       <p>
-        Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+        Fedezd fel a parfümök világát! 💧 Kínálatunkban a klasszikus aromáktól a modern, trendi illatokig mindent
+        megtalálsz.
+        Ne hagyd, hogy az unalmas napok eluralkodjanak – egy igazán jó illat mindig feldobja a hangulatod!
+        Kattints, szagolj, élvezd – a parfüm nem csak egy illat, hanem élmény is.
       </p>
     </div>
 
-    <div class="footer-column">
-      <h3>Kapcsolat</h3>
-      <p>Email: info@parfumpdm.hu</p>
-      <p>Telefon: +36 20 123 4567</p>
-      <p>Cím: 1182 Budapest, Illat utca 12.</p>
+    <!-- ===== TERMÉKKÁRTYÁK ===== -->
+    <div class="product-grid" id="product-grid">
+      <?php foreach ($products as $p): ?>
+        <div class="product-card" onclick="window.location.href='product.php?id=<?= (int) $p['id'] ?>'">
+          <div class="product-image">
+            <?php if (!empty($p['image_url'])): ?>
+              <img src="<?= h($p['image_url']) ?>" alt="<?= h($p['name']) ?>">
+            <?php endif; ?>
+          </div>
+          <div class="product-name"><?= h($p['name']) ?></div>
+          <div class="product-brand"><?= h($p['brand']) ?></div>
+          <div class="product-category">(<?= h($p['category_name']) ?>)</div>
+          <div class="product-price">Ár: <?= (int) $p['price'] ?> Ft</div>
+          <div class="product-stock">Készlet: <?= (int) $p['stock'] ?></div>
+          <?php if ((int) $p['stock'] > 0): ?>
+            <form class="product-actions-row" method="post" action="cart.php" onclick="event.stopPropagation();">
+              <input type="hidden" name="action" value="add">
+              <input type="hidden" name="product_id" value="<?= (int) $p['id'] ?>">
+
+              <input type="number" name="qty" value="1" min="1" max="<?= (int) $p['stock'] ?>" class="qty-input">
+
+              <button type="submit" class="add-to-cart-btn">Kosárba</button>
+            </form>
+          <?php else: ?>
+            <div class="sold-out">Elfogyott</div>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
     </div>
 
-    <div class="footer-column">
-      <h3>Információk</h3>
-      <a href="products.php">Összes parfüm</a>
-      <a href="cart.php">Kosár</a>
-      <a href="orders.php">Rendeléseim</a>
-      <a href="login.php">Bejelentkezés</a>
+    <!-- Termék lapozás -->
+    <div class="slider-nav">
+      <button onclick="prevProducts()">← Előző</button>
+      <button onclick="nextProducts()">Következő →</button>
+      <a href="products.php" class="all-products">Összes parfüm</a>
+    </div>
+  </main>
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-container">
+
+      <div class="footer-column">
+        <h3>Parfum p'Dm</h3>
+        <p>
+          Fedezd fel prémium parfümkínálatunkat női, férfi és unisex illatokkal.
+        </p>
+      </div>
+
+      <div class="footer-column">
+        <h3>Kapcsolat</h3>
+        <p>Email: info@parfumpdm.hu</p>
+        <p>Telefon: +36 20 123 4567</p>
+        <p>Cím: 1182 Budapest, Illat utca 12.</p>
+      </div>
+
+      <div class="footer-column">
+        <h3>Információk</h3>
+        <a href="products.php">Összes parfüm</a>
+        <a href="cart.php">Kosár</a>
+        <a href="orders.php">Rendeléseim</a>
+        <a href="login.php">Bejelentkezés</a>
+      </div>
+
+      <div class="footer-column">
+        <h3>Vásárlás</h3>
+        <p>Biztonságos rendelés</p>
+        <p>Gyors kiszállítás</p>
+        <p>Minőségi termékek</p>
+        <p>Ügyfélszolgálat minden hétköznap</p>
+      </div>
+
     </div>
 
-    <div class="footer-column">
-      <h3>Vásárlás</h3>
-      <p>Biztonságos rendelés</p>
-      <p>Gyors kiszállítás</p>
-      <p>Minőségi termékek</p>
-      <p>Ügyfélszolgálat minden hétköznap</p>
+    <div class="footer-bottom">
+      <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
     </div>
-
-  </div>
-
-  <div class="footer-bottom">
-    <p>&copy; <?= date('Y') ?> Parfum p'Dm – Minden jog fenntartva.</p>
-  </div>
-</footer>
+  </footer>
 
   <script>
     /* ===== SLIDER JS ===== */
