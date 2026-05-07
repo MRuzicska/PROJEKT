@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="hu">
+
+<head>
+    <meta charset="UTF-8">
+    <title>API Teszt</title>
+
+    <style>
+        body {
+            background: #111;
+            color: white;
+            font-family: Arial;
+            padding: 40px;
+        }
+
+        button {
+            padding: 12px 20px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        pre {
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            overflow: auto;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Parfum API Teszt</h1>
+
+    <button onclick="getProducts()">Termekek</button>
+
+    <button onclick="getCategories()">Kategoriak</button>
+
+    <button onclick="getProduct()">1 Termek</button>
+
+    <button onclick="login()">Login Teszt</button>
+
+    <button onclick="me()">Sajat Profil</button>
+
+    <button onclick="addToCart()">Kosarhoz adas</button>
+
+    <button onclick="getCart()">Kosar lekerdezese</button>
+
+    <button onclick="checkout()">Rendeles leadasa</button>
+
+    <pre id="result"></pre>
+
+    <script>
+
+        const result = document.getElementById("result");
+
+        async function getProducts() {
+
+            const response = await fetch("http://localhost:8000/api/products.php");
+
+            const data = await response.json();
+
+            result.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function getCategories() {
+
+            const response = await fetch("http://localhost:8000/api/categories.php");
+
+            const data = await response.json();
+
+            result.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function getProduct() {
+
+            const response = await fetch("http://localhost:8000/api/product.php?id=73");
+
+            const data = await response.json();
+
+            result.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function login() {
+
+            const response = await fetch("http://localhost:8000/api/login.php", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    email: "ruzicskamarci@gmail.com",
+                    password: "Marci2006"
+                })
+            });
+
+            const data = await response.json();
+
+            result.innerText = JSON.stringify(data, null, 2);
+
+            if (data.token) {
+                localStorage.setItem("token", data.token);
+            }
+        }
+
+        async function me() {
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("http://localhost:8000/api/me.php", {
+
+                method: "GET",
+
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            const data = await response.json();
+
+            result.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function addToCart() {
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("http://localhost:8000/api/cart.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    product_id: 73,
+                    quantity: 1
+                })
+            });
+
+            const data = await response.json();
+            result.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function getCart() {
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("http://localhost:8000/api/cart.php", {
+                method: "GET",
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            });
+
+            const data = await response.json();
+            result.innerText = JSON.stringify(data, null, 2);
+        }
+
+        async function checkout() {
+
+            const token = localStorage.getItem("token");
+
+            const response = await fetch("http://localhost:8000/api/checkout.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body: JSON.stringify({
+                    shipping_name: "Teszt Elek",
+                    shipping_address: "Teszt utca 1",
+                    shipping_phone: "+36123456789"
+                })
+            });
+
+            const data = await response.json();
+            result.innerText = JSON.stringify(data, null, 2);
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -443,7 +443,7 @@ function statusClass($s) {
         </thead>
         <tbody>
           <?php foreach ($items as $it):
-            $sub = ((float)$it['unit_price']) * ((int)$it['qty'];
+            $sub = ((float)$it['unit_price']) * ((int)$it['qty']);
           ?>
             <tr>
               <td>
