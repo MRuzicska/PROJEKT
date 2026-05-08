@@ -803,3 +803,5 @@ CREATE TABLE IF NOT EXISTS api_tokens (
     expires_at TIMESTAMP NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+ALTER TABLE orders ADD shipping_email VARCHAR(255) NULL;
